@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'register.dart';
@@ -19,13 +20,13 @@ class _SignInPageState extends State<SignInPage> {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     Future<String?> signIn(String mail, String pwd) async {
-     /* try {
+     try {
         await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: mail, password: pwd);
         return null;
       } on FirebaseAuthException catch (ex) {
         return "${ex.code}: ${ex.message}";
-   } */
+   }
     }
     return Scaffold(
       backgroundColor: const Color(0xFF22282C),

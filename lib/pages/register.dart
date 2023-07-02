@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,18 +15,18 @@ class _RegisterState extends State<Register> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirm = TextEditingController();
 
-  // CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-  // Future<void> addUser(name, email, password) {
-  //   return users
-  //       .add({
-  //     'Name': name,
-  //     'Email': email,
-  //     'Password': password
-  //   })
-  //       .then((value) => print("User Added"))
-  //       .catchError((error) => print("Failed to add user: $error"));
-  // }
+  Future<void> addUser(name, email, password) {
+    return users
+        .add({
+      'Name': name,
+      'Email': email,
+      'Password': password
+    })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +158,7 @@ class _RegisterState extends State<Register> {
                                       if (_passwordController.text == _confirm.text) {
                                         if (_passwordController.text.length > 5) {
                                           if (_nameController.text.isEmpty == false) {
-                                            // addUser(_nameController.text, _emailController.text, _passwordController.text);
+                                            addUser(_nameController.text, _emailController.text, _passwordController.text);
                                           } else {
                                             const BasicAlert(text: "Name Field is Empty", title: "Error in User Creation",);
 

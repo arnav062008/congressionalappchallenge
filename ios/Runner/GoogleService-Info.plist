@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>865934151754-sn47s5b5f75ud8p71ubal9c5q5gic1s8.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.865934151754-sn47s5b5f75ud8p71ubal9c5q5gic1s8</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDueIIRjNWdAEvf9v_ehlFlfOHFsvuLoTw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>865934151754</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.congressionalappchallenge</string>
+	<key>PROJECT_ID</key>
+	<string>congressionalac</string>
+	<key>STORAGE_BUCKET</key>
+	<string>congressionalac.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:865934151754:ios:4416d98958b84516b0d6b3</string>
+</dict>
+</plist>

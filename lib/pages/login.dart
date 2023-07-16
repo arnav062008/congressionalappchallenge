@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'register.dart';
@@ -18,14 +20,15 @@ class _SignInPageState extends State<SignInPage> {
     double height = MediaQuery.of(context).size.height;
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
-    Future<String?> signIn(String mail, String pwd) async {
-     /* try {
-        await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: mail, password: pwd);
-        return null;
-      } on FirebaseAuthException catch (ex) {
-        return "${ex.code}: ${ex.message}";
-   } */
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    Future<dynamic> signIn(String email, String password) async {
+      return FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+      )
+          .then((value) => print("User Added"))
+          .catchError((error) => print("Failed to add user: $error"));
     }
     return Scaffold(
       backgroundColor: const Color(0xFF22282C),

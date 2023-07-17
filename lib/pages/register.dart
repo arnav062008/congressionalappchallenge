@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class Register extends StatefulWidget {
   const Register({super.key});
 
@@ -18,11 +18,11 @@ class _RegisterState extends State<Register> {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   Future<void> addUser(name, email, password) {
-    return FirebaseAuth.instance.signInWithEmailAndPassword(
+    return FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     )
-        .then((value) => print("User Added"))
+        .then((value) => print("User Signed In"))
         .catchError((error) => print("Failed to add user: $error"));
   }
 

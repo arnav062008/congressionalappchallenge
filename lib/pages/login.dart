@@ -27,7 +27,7 @@ class _SignInPageState extends State<SignInPage> {
       email: email,
       password: password,
       )
-          .then((value) => print("User Added"))
+          .then((value) => print("User signed in"))
           .catchError((error) => print("Failed to add user: $error"));
     }
     return Scaffold(

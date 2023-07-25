@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:congressionalappchallenge/pages/summary.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -252,7 +253,14 @@ class _SignInPageState extends State<SignInPage> {
                                     ),
                                   ),
                                   onTap: () {
+
                                     signIn(emailController.text, passwordController.text);
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => Summary()),
+                                      );
+
                                   },
                                 ),
                               ],

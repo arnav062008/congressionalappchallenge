@@ -1,12 +1,25 @@
+import 'package:congressionalappchallenge/pages/add_meal.dart';
 import 'package:flutter/material.dart';
 
-class Summary extends StatelessWidget {
+class Summary extends StatefulWidget {
   const Summary({super.key});
 
+  @override
+  State<Summary> createState() => _SummaryState();
+}
+
+class _SummaryState extends State<Summary> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    bool week;
+    void updateWeek(bool newWeekValue) {
+      setState(() {
+        week = newWeekValue;
+      });
+    }
+
     return Scaffold(
       bottomNavigationBar: Container(
         width: width * 0.866,
@@ -48,10 +61,14 @@ class Summary extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Center(
-                    child: Icon(
-                      Icons.add_circle_outline,
-                      size: width / 10,
-                      color: Colors.white,
+                    child: GestureDetector(
+                      onTap: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MealAdd())),
+                      child: Icon(
+                        Icons.add_circle_outline,
+                        size: width / 10,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -127,12 +144,12 @@ class Summary extends StatelessWidget {
                       ),
                     ),
                   ),
-                  CustomSwitch(),
+                  const CustomSwitch(),
                 ],
               ),
             ),
           ),
-          Container(
+          SizedBox(
             width: 366.06,
             height: 169.30,
             child: Stack(
@@ -140,7 +157,7 @@ class Summary extends StatelessWidget {
                 Positioned(
                   left: 0,
                   top: 0,
-                  child: Container(
+                  child: SizedBox(
                     width: 366.06,
                     height: 169.30,
                     child: Stack(
@@ -687,6 +704,8 @@ class Summary extends StatelessWidget {
 }
 
 class CustomSwitch extends StatefulWidget {
+  const CustomSwitch({super.key});
+
   @override
   _CustomSwitchState createState() => _CustomSwitchState();
 }
@@ -723,7 +742,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
       child: Stack(
         children: [
           AnimatedPositioned(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             top: 0,
             left: _isWeeklySelected ? 0 : 85, // Adjust the position as needed
@@ -744,7 +763,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
                   onTap: () => _toggleSelectionWeek(),
                   child: Container(
                     height: 41,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(78),
                         bottomLeft: Radius.circular(78),
@@ -756,8 +775,8 @@ class _CustomSwitchState extends State<CustomSwitch> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _isWeeklySelected
-                              ? Color(0xFF555553)
-                              : Color(0xFFFEFCFB),
+                              ? const Color(0xFF555553)
+                              : const Color(0xFFFEFCFB),
                           fontSize: 15,
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.w600,
@@ -772,7 +791,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
                   onTap: () => _toggleSelectionMonth(),
                   child: Container(
                     height: 41,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(78),
                         bottomRight: Radius.circular(78),
@@ -784,8 +803,8 @@ class _CustomSwitchState extends State<CustomSwitch> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _isMonthlySelected
-                              ? Color(0xFF555553)
-                              : Color(0xFFFEFCFB),
+                              ? const Color(0xFF555553)
+                              : const Color(0xFFFEFCFB),
                           fontSize: 15,
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.w600,

@@ -13,80 +13,9 @@ class _SummaryState extends State<Summary> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    bool week;
-    void updateWeek(bool newWeekValue) {
-      setState(() {
-        week = newWeekValue;
-      });
-    }
 
     return Scaffold(
-      bottomNavigationBar: Container(
-        width: width * 0.866,
-        height: height * 0.13,
-        decoration: const ShapeDecoration(
-          color: Color(0xFF2E343B),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50),
-              topRight: Radius.circular(50),
-            ),
-          ),
-        ),
-        child: Stack(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Center(
-                    child: Icon(
-                      Icons.house_outlined,
-                      size: width / 10,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Center(
-                    child: Icon(
-                      Icons.map_outlined,
-                      size: width / 10,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MealAdd())),
-                      child: Icon(
-                        Icons.add_circle_outline,
-                        size: width / 10,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Center(
-                    child: Icon(
-                      Icons.settings_outlined,
-                      size: width / 10,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -815,6 +744,75 @@ class _CustomSwitchState extends State<CustomSwitch> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BottomNavigationBarWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final iconSize = width / 10;
+
+    return Container(
+      width: width * 0.866,
+      height: MediaQuery.of(context).size.height * 0.13,
+      decoration: const ShapeDecoration(
+        color: Color(0xFF2E343B),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Summary()),
+              );
+            },
+            icon: Icon(
+              Icons.house_outlined,
+              size: iconSize,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.map_outlined,
+              size: iconSize,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MealAdd()),
+              );
+            },
+            icon: Icon(
+              Icons.add_circle_outline,
+              size: iconSize,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.settings_outlined,
+              size: iconSize,
+              color: Colors.white,
+            ),
           ),
         ],
       ),

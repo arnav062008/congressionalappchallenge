@@ -1,12 +1,17 @@
-import 'package:congressionalappchallenge/pages/map.dart';
-import 'package:congressionalappchallenge/pages/summary.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'map.dart';
+import 'summary.dart' as summary;
 
 class MealAdd extends StatefulWidget {
   const MealAdd({Key? key, this.latitude, this.longitude}) : super(key: key);
   final double? latitude;
   final double? longitude;
+
   @override
   State<MealAdd> createState() => _MealAddState();
 }
@@ -14,11 +19,20 @@ class MealAdd extends StatefulWidget {
 class _MealAddState extends State<MealAdd> {
   final TextEditingController descriptionController = TextEditingController();
   late DateTime selectedDate;
+  late int servingAmounts = 1;
+  final TextEditingController _servingAmount = TextEditingController();
+  CollectionReference meals = FirebaseFirestore.instance.collection('meals');
 
   @override
   void initState() {
     super.initState();
     selectedDate = DateTime.now();
+    _servingAmount.addListener(() {
+      final text = _servingAmount.text;
+      if (text.isNotEmpty && !RegExp(r'^\d+$').hasMatch(text)) {
+        _servingAmount.text = '1';
+      }
+    });
   }
 
   void onDateChanged(DateTime newDate) {
@@ -27,23 +41,61 @@ class _MealAddState extends State<MealAdd> {
     });
   }
 
+  void _saveMealToFirebase() {
+    final String description = descriptionController.text;
+    final DateTime date = selectedDate;
+    final int servingAmount = int.parse(_servingAmount.text);
+    final double latitude = widget.latitude ?? 0.0;
+    final double longitude = widget.longitude ?? 0.0;
+
+    DocumentReference newMealRef = meals.doc();
+    newMealRef.set({
+      'description': description,
+      'date': date,
+      'latitude': latitude,
+      'longitude': longitude,
+      'servingAmount': servingAmount,
+    }).then((_) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Meal data saved to Firebase!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }).catchError((error) {
+      if (kDebugMode) {
+        print('Error adding meal: $error');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(),
+      bottomNavigationBar: const BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),
       body: Column(
         children: [
-          TopBarWidget(),
+          const TopBarWidget(),
           const SizedBox(height: 8),
-          TitleWidget(),
+          const TitleWidget(),
           const SizedBox(height: 8),
           Container(
-            width: 351,
-            height: 500,
+            width: width * 0.8,
+            height: height * 0.6,
             decoration: ShapeDecoration(
               color: const Color(0xFF2E343B),
               shape: RoundedRectangleBorder(
@@ -54,6 +106,8 @@ class _MealAddState extends State<MealAdd> {
               children: [
                 SizedBox(height: height * 0.05),
                 TextBox(
+                  number: false,
+                  texts: 'Description',
                   width: width * 0.64,
                   height: height * 0.09,
                   controller: descriptionController,
@@ -99,9 +153,6 @@ class _MealAddState extends State<MealAdd> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              // Handle save button action here
-                            },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 20),
@@ -129,24 +180,21 @@ class _MealAddState extends State<MealAdd> {
                           Row(
                             children: [
                               Container(
-                                width: 156,
-                                height: 42,
+                                width: width * 0.4,
+                                height: height * 0.06,
                                 decoration: ShapeDecoration(
                                   color: const Color(0xFFFEFCFB),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                child: const Center(
-                                  child: Text(
-                                    'Serving Amount',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color(0xFF555553),
-                                      fontSize: 15,
-                                      fontFamily: 'Lato',
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                child: Center(
+                                  child: TextBox(
+                                    number: true,
+                                    texts: "Serving Amount",
+                                    width: width * 0.64,
+                                    height: height * 0.09,
+                                    controller: _servingAmount,
                                   ),
                                 ),
                               ),
@@ -156,7 +204,8 @@ class _MealAddState extends State<MealAdd> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => MapScreen()),
+                                      builder: (context) => const MapScreen(),
+                                    ),
                                   );
                                 },
                                 child: const Icon(
@@ -170,14 +219,19 @@ class _MealAddState extends State<MealAdd> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           widget.latitude != null
                               ? Align(
                                   alignment: Alignment.centerRight,
-                                  child: Icon(
-                                    Icons.add_circle,
-                                    size: 45,
-                                    color: Colors.white,
+                                  child: GestureDetector(
+                                    child: const Icon(
+                                      Icons.add_circle,
+                                      size: 45,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {
+                                      _saveMealToFirebase();
+                                    },
                                   ),
                                 )
                               : const SizedBox()
@@ -196,6 +250,8 @@ class _MealAddState extends State<MealAdd> {
 }
 
 class BottomNavigationBarWidget extends StatelessWidget {
+  const BottomNavigationBarWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -220,7 +276,8 @@ class BottomNavigationBarWidget extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Summary()),
+                MaterialPageRoute(
+                    builder: (context) => const summary.Summary()),
               );
             },
             icon: Icon(
@@ -265,6 +322,8 @@ class BottomNavigationBarWidget extends StatelessWidget {
 }
 
 class TopBarWidget extends StatelessWidget {
+  const TopBarWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -290,6 +349,8 @@ class TopBarWidget extends StatelessWidget {
 }
 
 class TitleWidget extends StatelessWidget {
+  const TitleWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -316,12 +377,17 @@ class TitleWidget extends StatelessWidget {
 class TextBox extends StatelessWidget {
   final double width;
   final double height;
+  final bool number;
+  final String texts;
   final TextEditingController controller;
 
   const TextBox({
+    super.key,
+    required this.number,
     required this.width,
     required this.height,
     required this.controller,
+    required this.texts,
   });
 
   @override
@@ -339,10 +405,18 @@ class TextBox extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: TextField(
           controller: controller,
-          decoration: const InputDecoration(
+          keyboardType: number ? TextInputType.number : null,
+          inputFormatters:
+              number ? [FilteringTextInputFormatter.digitsOnly] : [],
+          decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: 'Write a description',
-            hintStyle: TextStyle(color: Colors.grey),
+            hintText: texts,
+            hintStyle: const TextStyle(
+              color: Color(0xFF555553),
+              fontSize: 15,
+              fontFamily: 'Lato',
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

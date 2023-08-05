@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:congressionalappchallenge/pages/summary.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'register.dart';
-
-
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -21,16 +18,30 @@ class _SignInPageState extends State<SignInPage> {
     double height = MediaQuery.of(context).size.height;
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
-    Future<dynamic> signIn(String email, String password) async {
-      return FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-      )
-          .then((value) => print("User signed in"))
-          .catchError((error) => print("Failed to add user: $error"));
+    Future<void> signIn(String email, String password) async {
+      try {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Summary()),
+        );
+      } catch (error) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return BasicAlert(
+              text: error.toString(),
+              title: "Failed To Login",
+            );
+          },
+        );
+      }
     }
+
     return Scaffold(
       backgroundColor: const Color(0xFF22282C),
       body: Column(
@@ -74,26 +85,24 @@ class _SignInPageState extends State<SignInPage> {
                               width: double.infinity,
                               height: height * 0.08,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(width * 0.02),
+                                borderRadius:
+                                    BorderRadius.circular(width * 0.02),
                               ),
-                              padding:  const EdgeInsets.symmetric(vertical: 7),
-                              child:  Column(
+                              padding: const EdgeInsets.symmetric(vertical: 7),
+                              child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-
-                                    Text(
-                                      "Welcome back!",
-                                      style: TextStyle(
-                                        color: const Color(0xfff7f7f7),
-                                        fontSize: width * 0.06,
-                                        fontFamily: "Inter",
-                                        fontWeight: FontWeight.w500,
-
-                                      ),
+                                  Text(
+                                    "Welcome back!",
+                                    style: TextStyle(
+                                      color: const Color(0xfff7f7f7),
+                                      fontSize: width * 0.06,
+                                      fontFamily: "Inter",
+                                      fontWeight: FontWeight.w500,
                                     ),
-
+                                  ),
                                   Text(
                                     "Enter your credentials to continue.",
                                     style: TextStyle(
@@ -116,25 +125,32 @@ class _SignInPageState extends State<SignInPage> {
                                   width: width * 0.9,
                                   height: height * 0.07,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(width * 0.02),
-                                    border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+                                    borderRadius:
+                                        BorderRadius.circular(width * 0.02),
+                                    border: Border.all(
+                                        color: const Color(0xffdddddd),
+                                        width: width * 0.01),
                                     color: const Color(0xfff7f7f7),
                                   ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 0.04),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: width * 0.01),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: width * 0.01),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Padding(
-                                          padding:  EdgeInsets.fromLTRB(width*0.05, 0, 0, 0),
+                                          padding: EdgeInsets.fromLTRB(
+                                              width * 0.05, 0, 0, 0),
                                           child: Icon(
                                             Icons.email_outlined,
                                             color: const Color(0xffc6c6c6),
                                             size: width * 0.06,
-
                                           ),
                                         ),
                                         SizedBox(width: width * 0.015),
@@ -150,11 +166,13 @@ class _SignInPageState extends State<SignInPage> {
                                               enabledBorder: InputBorder.none,
                                               errorBorder: InputBorder.none,
                                               focusedBorder: InputBorder.none,
-                                              focusedErrorBorder: InputBorder.none,
+                                              focusedErrorBorder:
+                                                  InputBorder.none,
                                               hintText: 'Email Address',
                                               border: InputBorder.none,
                                               hintStyle: TextStyle(
-                                                color: const Color(0xffc6c6c6).withOpacity(0.5),
+                                                color: const Color(0xffc6c6c6)
+                                                    .withOpacity(0.5),
                                                 fontSize: width * 0.04,
                                               ),
                                             ),
@@ -164,31 +182,37 @@ class _SignInPageState extends State<SignInPage> {
                                     ),
                                   ),
                                 ),
-
                                 SizedBox(height: height * 0.01),
                                 Container(
                                   width: width * 0.9,
                                   height: height * 0.07,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(width * 0.02),
-                                    border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+                                    borderRadius:
+                                        BorderRadius.circular(width * 0.02),
+                                    border: Border.all(
+                                        color: const Color(0xffdddddd),
+                                        width: width * 0.01),
                                     color: const Color(0xfff7f7f7),
                                   ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 0.04),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: width * 0.01),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: width * 0.01),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Padding(
-                                          padding:  EdgeInsets.fromLTRB(width*0.05, 0, 0, 0),
+                                          padding: EdgeInsets.fromLTRB(
+                                              width * 0.05, 0, 0, 0),
                                           child: Icon(
                                             Icons.lock_outline,
                                             color: const Color(0xffc6c6c6),
                                             size: width * 0.06,
-
                                           ),
                                         ),
                                         SizedBox(width: width * 0.015),
@@ -204,11 +228,13 @@ class _SignInPageState extends State<SignInPage> {
                                               enabledBorder: InputBorder.none,
                                               errorBorder: InputBorder.none,
                                               focusedBorder: InputBorder.none,
-                                              focusedErrorBorder: InputBorder.none,
+                                              focusedErrorBorder:
+                                                  InputBorder.none,
                                               hintText: 'Password',
                                               border: InputBorder.none,
                                               hintStyle: TextStyle(
-                                                color: const Color(0xffc6c6c6).withOpacity(0.5),
+                                                color: const Color(0xffc6c6c6)
+                                                    .withOpacity(0.5),
                                                 fontSize: width * 0.04,
                                               ),
                                             ),
@@ -223,9 +249,9 @@ class _SignInPageState extends State<SignInPage> {
                                   width: width * 0.9,
                                   height: height * 0.02,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(width * 0.02),
+                                    borderRadius:
+                                        BorderRadius.circular(width * 0.02),
                                   ),
-
                                 ),
                                 SizedBox(height: height * 0.02),
                                 GestureDetector(
@@ -233,14 +259,18 @@ class _SignInPageState extends State<SignInPage> {
                                     width: width * 0.9,
                                     height: height * 0.07,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(width * 0.02),
+                                      borderRadius:
+                                          BorderRadius.circular(width * 0.02),
                                       color: const Color(0xff169c89),
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0.04),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Text(
                                           "Log in",
@@ -253,14 +283,8 @@ class _SignInPageState extends State<SignInPage> {
                                     ),
                                   ),
                                   onTap: () {
-
-                                    signIn(emailController.text, passwordController.text);
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const Summary()),
-                                      );
-
+                                    signIn(emailController.text,
+                                        passwordController.text);
                                   },
                                 ),
                               ],
@@ -280,7 +304,8 @@ class _SignInPageState extends State<SignInPage> {
                               width: width * 0.92,
                               height: height * 0.02,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(width * 0.02),
+                                borderRadius:
+                                    BorderRadius.circular(width * 0.02),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -302,30 +327,39 @@ class _SignInPageState extends State<SignInPage> {
                               width: width * 0.9,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
                                     width: width * 0.25,
                                     height: height * 0.06,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(width * 0.02),
-                                      border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+                                      borderRadius:
+                                          BorderRadius.circular(width * 0.02),
+                                      border: Border.all(
+                                          color: const Color(0xffdddddd),
+                                          width: width * 0.01),
                                       color: const Color(0xfff7f7f7),
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0.04),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Container(
                                           width: width * 0.04,
                                           height: height * 0.04,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(width * 0.02),
+                                            borderRadius: BorderRadius.circular(
+                                                width * 0.02),
                                           ),
-                                          child: FlutterLogo(size: width * 0.04),
+                                          child:
+                                              FlutterLogo(size: width * 0.04),
                                         ),
                                       ],
                                     ),
@@ -334,23 +368,31 @@ class _SignInPageState extends State<SignInPage> {
                                     width: width * 0.25,
                                     height: height * 0.06,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(width * 0.02),
-                                      border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+                                      borderRadius:
+                                          BorderRadius.circular(width * 0.02),
+                                      border: Border.all(
+                                          color: const Color(0xffdddddd),
+                                          width: width * 0.01),
                                       color: const Color(0xfff7f7f7),
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0.04),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Container(
                                           width: width * 0.04,
                                           height: height * 0.04,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(width * 0.02),
+                                            borderRadius: BorderRadius.circular(
+                                                width * 0.02),
                                           ),
-                                          child: FlutterLogo(size: width * 0.04),
+                                          child:
+                                              FlutterLogo(size: width * 0.04),
                                         ),
                                       ],
                                     ),
@@ -359,23 +401,31 @@ class _SignInPageState extends State<SignInPage> {
                                     width: width * 0.25,
                                     height: height * 0.06,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(width * 0.02),
-                                      border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+                                      borderRadius:
+                                          BorderRadius.circular(width * 0.02),
+                                      border: Border.all(
+                                          color: const Color(0xffdddddd),
+                                          width: width * 0.01),
                                       color: const Color(0xfff7f7f7),
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0.04),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Container(
                                           width: width * 0.04,
                                           height: height * 0.06,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(width * 0.02),
+                                            borderRadius: BorderRadius.circular(
+                                                width * 0.02),
                                           ),
-                                          child: FlutterLogo(size: width * 0.04),
+                                          child:
+                                              FlutterLogo(size: width * 0.04),
                                         ),
                                       ],
                                     ),
@@ -389,12 +439,10 @@ class _SignInPageState extends State<SignInPage> {
                       SizedBox(height: height * 0.03),
                       SizedBox(
                         width: width * 0.9,
-
                       ),
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -418,7 +466,7 @@ class _SignInPageState extends State<SignInPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const Register()),
-                 );
+                    );
                   },
                   child: const Text(
                     "Register",
@@ -431,9 +479,32 @@ class _SignInPageState extends State<SignInPage> {
               ],
             ),
           )
-
         ],
       ),
+    );
+  }
+}
+
+class BasicAlert extends StatelessWidget {
+  const BasicAlert({Key? key, required this.text, required this.title})
+      : super(key: key);
+
+  final String title;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(title),
+      content: Text(text),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text("Ok"),
+        ),
+      ],
     );
   }
 }

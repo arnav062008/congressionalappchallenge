@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
 class Register extends StatefulWidget {
   const Register({super.key});
 
@@ -14,14 +14,15 @@ class _RegisterState extends State<Register> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirm = TextEditingController();
-  
+
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   Future<void> addUser(name, email, password) {
-    return FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    )
+    return FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        )
         .then((value) => print("User Signed In"))
         .catchError((error) => print("Failed to add user: $error"));
   }
@@ -73,10 +74,11 @@ class _RegisterState extends State<Register> {
                               width: double.infinity,
                               height: height * 0.08,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(width * 0.02),
+                                borderRadius:
+                                    BorderRadius.circular(width * 0.02),
                               ),
-                              padding:  const EdgeInsets.symmetric(vertical: 7),
-                              child:  Column(
+                              padding: const EdgeInsets.symmetric(vertical: 7),
+                              child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,19 +110,48 @@ class _RegisterState extends State<Register> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextBox(width: width, height: height, nameController: _nameController, icon: Icons.account_circle_outlined, text: "Name: ",),
+                                TextBox(
+                                  obsc: false,
+                                  width: width,
+                                  height: height,
+                                  nameController: _nameController,
+                                  icon: Icons.account_circle_outlined,
+                                  text: "Name: ",
+                                ),
                                 SizedBox(height: height * 0.01),
-                                TextBox(width: width, height: height, nameController: _emailController, icon: Icons.email_outlined, text: "Email Address: ",),
+                                TextBox(
+                                  obsc: false,
+                                  width: width,
+                                  height: height,
+                                  nameController: _emailController,
+                                  icon: Icons.email_outlined,
+                                  text: "Email Address: ",
+                                ),
                                 SizedBox(height: height * 0.01),
-                                TextBox(width: width, height: height, nameController: _passwordController, icon: Icons.lock_outline, text: "Password: ",),
+                                TextBox(
+                                  obsc: true,
+                                  width: width,
+                                  height: height,
+                                  nameController: _passwordController,
+                                  icon: Icons.lock_outline,
+                                  text: "Password: ",
+                                ),
                                 SizedBox(height: height * 0.01),
-                                TextBox(width: width, height: height, nameController: _confirm, icon: Icons.lock_outline, text: "Confirm Password: ",),
+                                TextBox(
+                                  obsc: true,
+                                  width: width,
+                                  height: height,
+                                  nameController: _confirm,
+                                  icon: Icons.lock_outline,
+                                  text: "Confirm Password: ",
+                                ),
                                 SizedBox(height: height * 0.01),
                                 Container(
                                   width: width * 0.9,
                                   height: height * 0.02,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(width * 0.02),
+                                    borderRadius:
+                                        BorderRadius.circular(width * 0.02),
                                   ),
                                 ),
                                 SizedBox(height: height * 0.02),
@@ -129,14 +160,18 @@ class _RegisterState extends State<Register> {
                                     width: width * 0.9,
                                     height: height * 0.07,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(width * 0.02),
+                                      borderRadius:
+                                          BorderRadius.circular(width * 0.02),
                                       color: const Color(0xff169c89),
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0.04),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Text(
                                           "Register",
@@ -149,28 +184,67 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onTap: () async {
-                                   final bool emailValid =
-                                    RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                    final bool emailValid = RegExp(
+                                            r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                         .hasMatch(_emailController.text);
                                     if (emailValid == true) {
-                                      if (_passwordController.text == _confirm.text) {
-                                        if (_passwordController.text.length > 5) {
-                                          if (_nameController.text.isEmpty == false) {
-                                            addUser(_nameController.text, _emailController.text, _passwordController.text);
+                                      if (_passwordController.text ==
+                                          _confirm.text) {
+                                        if (_passwordController.text.length >
+                                            5) {
+                                          if (_nameController.text.isEmpty ==
+                                              false) {
+                                            addUser(
+                                                _nameController.text,
+                                                _emailController.text,
+                                                _passwordController.text);
                                             Navigator.pop(context);
                                           } else {
-                                            const BasicAlert(text: "Name Field is Empty", title: "Error in User Creation",);
-
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const BasicAlert(
+                                                  text: "Name Field is Empty",
+                                                  title:
+                                                      "Error in User Creation",
+                                                );
+                                              },
+                                            );
                                           }
-
                                         } else {
-                                          const BasicAlert(text: "Password and Confirm Password Don't Match", title: "Error in User Creation",);
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const BasicAlert(
+                                                text:
+                                                    "Password must be at least 6 characters long",
+                                                title: "Error in User Creation",
+                                              );
+                                            },
+                                          );
                                         }
                                       } else {
-                                        const BasicAlert(text: "Password and Confirm Password Don't Match", title: "Error in User Creation",);
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const BasicAlert(
+                                              text:
+                                                  "Password and Confirm Password Don't Match",
+                                              title: "Error in User Creation",
+                                            );
+                                          },
+                                        );
                                       }
                                     } else {
-                                      const BasicAlert(text: "Email is Invalid", title: "Error in User Creation",);
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return const BasicAlert(
+                                            text: "Email is Invalid",
+                                            title: "Error in User Creation",
+                                          );
+                                        },
+                                      );
                                     }
                                   },
                                 ),
@@ -191,7 +265,8 @@ class _RegisterState extends State<Register> {
                               width: width * 0.92,
                               height: height * 0.02,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(width * 0.02),
+                                borderRadius:
+                                    BorderRadius.circular(width * 0.02),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -213,31 +288,44 @@ class _RegisterState extends State<Register> {
                               width: width * 0.9,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  AlternateSignInMethods(width: width, height: height, image: "google.png",),
+                                  AlternateSignInMethods(
+                                    width: width,
+                                    height: height,
+                                    image: "google.png",
+                                  ),
                                   Container(
                                     width: width * 0.25,
                                     height: height * 0.06,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(width * 0.02),
-                                      border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+                                      borderRadius:
+                                          BorderRadius.circular(width * 0.02),
+                                      border: Border.all(
+                                          color: const Color(0xffdddddd),
+                                          width: width * 0.01),
                                       color: const Color(0xfff7f7f7),
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0.04),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Container(
                                           width: width * 0.04,
                                           height: height * 0.04,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(width * 0.02),
+                                            borderRadius: BorderRadius.circular(
+                                                width * 0.02),
                                           ),
-                                          child: FlutterLogo(size: width * 0.04),
+                                          child:
+                                              FlutterLogo(size: width * 0.04),
                                         ),
                                       ],
                                     ),
@@ -246,23 +334,31 @@ class _RegisterState extends State<Register> {
                                     width: width * 0.25,
                                     height: height * 0.06,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(width * 0.02),
-                                      border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+                                      borderRadius:
+                                          BorderRadius.circular(width * 0.02),
+                                      border: Border.all(
+                                          color: const Color(0xffdddddd),
+                                          width: width * 0.01),
                                       color: const Color(0xfff7f7f7),
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 0.04),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0.04),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Container(
                                           width: width * 0.04,
                                           height: height * 0.06,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(width * 0.02),
+                                            borderRadius: BorderRadius.circular(
+                                                width * 0.02),
                                           ),
-                                          child: FlutterLogo(size: width * 0.04),
+                                          child:
+                                              FlutterLogo(size: width * 0.04),
                                         ),
                                       ],
                                     ),
@@ -277,7 +373,6 @@ class _RegisterState extends State<Register> {
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -311,7 +406,6 @@ class _RegisterState extends State<Register> {
               ],
             ),
           )
-
         ],
       ),
     );
@@ -319,25 +413,25 @@ class _RegisterState extends State<Register> {
 }
 
 class BasicAlert extends StatelessWidget {
-   const BasicAlert({
-    super.key,
-    required this.text,
-    required this.title
-  });
+  const BasicAlert({Key? key, required this.text, required this.title})
+      : super(key: key);
+
   final String title;
   final String text;
+
   @override
   Widget build(BuildContext context) {
-    return CupertinoAlertDialog(
-                title: Text(title),
-                content: Text(text),
-                actions: <Widget>[
-                  ElevatedButton(onPressed: () {
-                    Navigator.pop(context);
-    }, child: const Text(
-    "Ok"
-    ),
-                  )]
+    return AlertDialog(
+      title: Text(title),
+      content: Text(text),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text("Ok"),
+        ),
+      ],
     );
   }
 }
@@ -348,7 +442,6 @@ class AlternateSignInMethods extends StatelessWidget {
     required this.width,
     required this.height,
     required this.image,
-
   });
 
   final double width;
@@ -388,6 +481,7 @@ class AlternateSignInMethods extends StatelessWidget {
 class TextBox extends StatelessWidget {
   const TextBox({
     super.key,
+    required this.obsc,
     required this.width,
     required this.height,
     required this.icon,
@@ -395,6 +489,7 @@ class TextBox extends StatelessWidget {
     required this.text,
   }) : _nameController = nameController;
   final String text;
+  final bool obsc;
   final double width;
   final double height;
   final IconData icon;
@@ -419,21 +514,20 @@ class TextBox extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding:  EdgeInsets.fromLTRB(width*0.05, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
               child: Icon(
                 icon,
                 color: const Color(0xffc6c6c6),
                 size: width * 0.06,
-
               ),
             ),
             SizedBox(width: width * 0.015),
             Expanded(
               child: TextField(
+                obscureText: obsc,
                 style: TextStyle(
                   color: const Color(0xffc6c6c6),
                   fontSize: width * 0.04,
-
                 ),
                 controller: _nameController,
                 decoration: InputDecoration(

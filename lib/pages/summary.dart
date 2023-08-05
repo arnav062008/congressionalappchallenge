@@ -1,4 +1,5 @@
 import 'package:congressionalappchallenge/pages/add_meal.dart';
+import 'package:congressionalappchallenge/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 class Summary extends StatefulWidget {
@@ -13,7 +14,6 @@ class _SummaryState extends State<Summary> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       bottomNavigationBar: BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),
@@ -807,7 +807,12 @@ class BottomNavigationBarWidget extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Settings()),
+              );
+            },
             icon: Icon(
               Icons.settings_outlined,
               size: iconSize,

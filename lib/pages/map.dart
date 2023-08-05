@@ -1,42 +1,169 @@
+import 'package:congressionalappchallenge/pages/add_meal.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as l;
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  _MapScreenState createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late GoogleMapController mapController;
+  GoogleMapController? _mapController;
+  LatLng? _initialPosition;
+  final Set<Marker> _markers = {};
+  final TextEditingController _searchController = TextEditingController();
+  bool _markerPlaced = false;
+  double? _selectedLatitude;
+  double? _selectedLongitude;
 
-  final LatLng _center = const LatLng(-33.86, 151.20);
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+  void _getCurrentLocation() async {
+    l.Location location = l.Location();
+    final hasPermission = await location.hasPermission();
+    if (hasPermission == l.PermissionStatus.granted) {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        _initialPosition = LatLng(position.latitude, position.longitude);
+      });
+    } else {
+      // If permission is not granted, request it.
+      final permissionStatus = await location.requestPermission();
+      if (permissionStatus == l.PermissionStatus.granted) {
+        _getCurrentLocation(); // Retry getting the current location after permission is granted.
+      }
+    }
+  }
+
+  void _onMapDoubleTap(LatLng position) async {
+    setState(() {
+      _markerPlaced = true;
+      _markers.clear();
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('new_location'),
+          position: position,
+        ),
+      );
+      _selectedLatitude = position.latitude;
+      _selectedLongitude = position.longitude;
+    });
+
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+
+    if (placemarks.isNotEmpty) {
+      Placemark placemark = placemarks.first;
+      String address =
+          "${placemark.street}, ${placemark.locality}, ${placemark.country}";
+      if (kDebugMode) {
+        print("New pin address: $address");
+      }
+    }
+  }
+
+  void _onDoneButtonPressed() {
+    if (_selectedLatitude != null && _selectedLongitude != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MealAdd(
+                latitude: _selectedLatitude, longitude: _selectedLongitude)),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    final mediaQuery = MediaQuery.of(context);
+
+    return Scaffold(
       appBar: AppBar(
-        title: const Text('Maps Sample App'),
-        backgroundColor: Colors.green[700],
+        title: const Text('Map Screen'),
+        actions: _markerPlaced
+            ? [
+                IconButton(
+                  onPressed: _onDoneButtonPressed,
+                  icon: const Icon(Icons.done),
+                ),
+              ]
+            : [],
       ),
-      body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: 11.0,
-          ),
-          markers: {
-            Marker(
-              markerId: const MarkerId("Sydney"),
-              position: LatLng(-33.86, 151.20),
+      body: _initialPosition == null
+          ? const Center(child: CircularProgressIndicator())
+          : Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: _initialPosition!,
+                    zoom: 15,
+                  ),
+                  onMapCreated: (controller) {
+                    _mapController = controller;
+                  },
+                  markers: _markers,
+                  onTap: (position) =>
+                      _onMapDoubleTap(position), // Change onTap to onDoubleTap
+                ),
+                Positioned(
+                  top: mediaQuery.size.height * 0.02,
+                  left: mediaQuery.size.width * 0.02,
+                  right: mediaQuery.size.width * 0.02,
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search for an address',
+                      suffixIcon: IconButton(
+                        onPressed: () async {
+                          String query = _searchController.text;
+                          if (query.isNotEmpty) {
+                            List<Location> locations =
+                                await locationFromAddress(query);
+                            if (locations.isNotEmpty) {
+                              Location location = locations.first;
+                              LatLng position = LatLng(
+                                location.latitude!,
+                                location.longitude!,
+                              );
+                              _mapController?.animateCamera(
+                                CameraUpdate.newLatLng(position),
+                              );
+                              setState(() {
+                                _markers.clear();
+                                _markers.add(
+                                  Marker(
+                                    markerId: const MarkerId('search_result'),
+                                    position: position,
+                                  ),
+                                );
+                                _selectedLatitude = position.latitude;
+                                _selectedLongitude = position.longitude;
+                              });
+                            }
+                          }
+                        },
+                        iconSize: mediaQuery.size.width * 0.06,
+                        icon: const Icon(Icons.search),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          }),
-    ));
+    );
   }
 }

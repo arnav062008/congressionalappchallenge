@@ -4,8 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MealAdd extends StatefulWidget {
-  const MealAdd({Key? key}) : super(key: key);
-
+  const MealAdd({Key? key, this.latitude, this.longitude}) : super(key: key);
+  final double? latitude;
+  final double? longitude;
   @override
   State<MealAdd> createState() => _MealAddState();
 }
@@ -170,16 +171,16 @@ class _MealAddState extends State<MealAdd> {
                             ],
                           ),
                           SizedBox(height: 20),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Icon(
-                                Icons.add_circle,
-                                size: 45,
-                                color: Colors.white,
-                              )
-                            ],
-                          )
+                          widget.latitude != null
+                              ? Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Icon(
+                                    Icons.add_circle,
+                                    size: 45,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const SizedBox()
                         ],
                       )
                     ],

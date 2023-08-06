@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'add_meal.dart';
+import 'meal_locate.dart';
 import 'summary.dart';
 
 class Settings extends StatelessWidget {
@@ -13,7 +14,7 @@ class Settings extends StatelessWidget {
     final screenHeight = mediaQuery.size.height;
 
     return Scaffold(
-      bottomNavigationBar: const BottomNavigationBarWidget(),
+      bottomNavigationBar: BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),
       body: Center(
         child: Container(
@@ -157,18 +158,14 @@ class Settings extends StatelessWidget {
 }
 
 class BottomNavigationBarWidget extends StatelessWidget {
-  const BottomNavigationBarWidget({super.key});
-
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-
-    final iconSize = screenWidth / 10;
+    final width = MediaQuery.of(context).size.width;
+    final iconSize = width / 10;
 
     return Container(
-      width: screenWidth * 0.866,
-      height: mediaQuery.size.height * 0.13,
+      width: width * 0.866,
+      height: MediaQuery.of(context).size.height * 0.13,
       decoration: const ShapeDecoration(
         color: Color(0xFF2E343B),
         shape: RoundedRectangleBorder(
@@ -195,7 +192,12 @@ class BottomNavigationBarWidget extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapPointScreen()),
+              );
+            },
             icon: Icon(
               Icons.map_outlined,
               size: iconSize,
@@ -216,7 +218,12 @@ class BottomNavigationBarWidget extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Settings()),
+              );
+            },
             icon: Icon(
               Icons.settings_outlined,
               size: iconSize,

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'map.dart';
+import 'meal_locate.dart';
+import 'settings.dart' as s;
 import 'summary.dart' as summary;
 
 class MealAdd extends StatefulWidget {
@@ -61,7 +63,7 @@ class _MealAddState extends State<MealAdd> {
         builder: (context) {
           return AlertDialog(
             title: const Text('Success'),
-            content: const Text('Meal data saved to Firebase!'),
+            content: const Text('Meal data saved!'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -85,7 +87,7 @@ class _MealAddState extends State<MealAdd> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      bottomNavigationBar: const BottomNavigationBarWidget(),
+      bottomNavigationBar: BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),
       body: Column(
         children: [
@@ -250,8 +252,6 @@ class _MealAddState extends State<MealAdd> {
 }
 
 class BottomNavigationBarWidget extends StatelessWidget {
-  const BottomNavigationBarWidget({super.key});
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -287,7 +287,12 @@ class BottomNavigationBarWidget extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapPointScreen()),
+              );
+            },
             icon: Icon(
               Icons.map_outlined,
               size: iconSize,
@@ -308,7 +313,12 @@ class BottomNavigationBarWidget extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const s.Settings()),
+              );
+            },
             icon: Icon(
               Icons.settings_outlined,
               size: iconSize,

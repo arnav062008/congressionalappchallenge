@@ -2,6 +2,8 @@ import 'package:congressionalappchallenge/pages/add_meal.dart';
 import 'package:congressionalappchallenge/pages/settings.dart';
 import 'package:flutter/material.dart';
 
+import 'meal_locate.dart';
+
 class Summary extends StatefulWidget {
   const Summary({super.key});
 
@@ -786,7 +788,12 @@ class BottomNavigationBarWidget extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapPointScreen()),
+              );
+            },
             icon: Icon(
               Icons.map_outlined,
               size: iconSize,

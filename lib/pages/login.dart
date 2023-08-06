@@ -1,6 +1,7 @@
 import 'package:congressionalappchallenge/pages/summary.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'register.dart';
 
@@ -18,6 +19,8 @@ class _SignInPageState extends State<SignInPage> {
     double height = MediaQuery.of(context).size.height;
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
     Future<void> signIn(String email, String password) async {
       try {
         UserCredential userCredential =
@@ -222,6 +225,7 @@ class _SignInPageState extends State<SignInPage> {
                                               color: const Color(0xffc6c6c6),
                                               fontSize: width * 0.04,
                                             ),
+                                            obscureText: true,
                                             controller: passwordController,
                                             decoration: InputDecoration(
                                               disabledBorder: InputBorder.none,
@@ -358,8 +362,10 @@ class _SignInPageState extends State<SignInPage> {
                                             borderRadius: BorderRadius.circular(
                                                 width * 0.02),
                                           ),
-                                          child:
-                                              FlutterLogo(size: width * 0.04),
+                                          child: GestureDetector(
+                                              onTap: () {},
+                                              child: FlutterLogo(
+                                                  size: width * 0.04)),
                                         ),
                                       ],
                                     ),

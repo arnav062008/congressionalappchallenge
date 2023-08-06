@@ -92,17 +92,6 @@ class _MapScreenState extends State<MapScreen> {
     final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Map Screen'),
-        actions: _markerPlaced
-            ? [
-                IconButton(
-                  onPressed: _onDoneButtonPressed,
-                  icon: const Icon(Icons.done),
-                ),
-              ]
-            : [],
-      ),
       body: _initialPosition == null
           ? const Center(child: CircularProgressIndicator())
           : Stack(
@@ -119,49 +108,73 @@ class _MapScreenState extends State<MapScreen> {
                   onTap: (position) =>
                       _onMapDoubleTap(position), // Change onTap to onDoubleTap
                 ),
-                Positioned(
-                  top: mediaQuery.size.height * 0.02,
-                  left: mediaQuery.size.width * 0.02,
-                  right: mediaQuery.size.width * 0.02,
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search for an address',
-                      suffixIcon: IconButton(
-                        onPressed: () async {
-                          String query = _searchController.text;
-                          if (query.isNotEmpty) {
-                            List<Location> locations =
-                                await locationFromAddress(query);
-                            if (locations.isNotEmpty) {
-                              Location location = locations.first;
-                              LatLng position = LatLng(
-                                location.latitude!,
-                                location.longitude!,
-                              );
-                              _mapController?.animateCamera(
-                                CameraUpdate.newLatLng(position),
-                              );
-                              setState(() {
-                                _markers.clear();
-                                _markers.add(
-                                  Marker(
-                                    markerId: const MarkerId('search_result'),
-                                    position: position,
-                                  ),
-                                );
-                                _selectedLatitude = position.latitude;
-                                _selectedLongitude = position.longitude;
-                              });
-                            }
-                          }
-                        },
-                        iconSize: mediaQuery.size.width * 0.06,
-                        icon: const Icon(Icons.search),
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        color: Color(0xAAFFFFF),
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Search for an address',
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                String query = _searchController.text;
+                                if (query.isNotEmpty) {
+                                  List<Location> locations =
+                                      await locationFromAddress(query);
+                                  if (locations.isNotEmpty) {
+                                    Location location = locations.first;
+                                    LatLng position = LatLng(
+                                      location.latitude!,
+                                      location.longitude!,
+                                    );
+                                    _mapController?.animateCamera(
+                                      CameraUpdate.newLatLng(position),
+                                    );
+                                    setState(() {
+                                      _markers.clear();
+                                      _markers.add(
+                                        Marker(
+                                          markerId:
+                                              const MarkerId('search_result'),
+                                          position: position,
+                                        ),
+                                      );
+                                      _selectedLatitude = position.latitude;
+                                      _selectedLongitude = position.longitude;
+                                    });
+                                  }
+                                }
+                              },
+                              iconSize: mediaQuery.size.width * 0.06,
+                              icon: const Icon(Icons.search),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
+                _markerPlaced
+                    ? Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: IconButton(
+                            onPressed: _onDoneButtonPressed,
+                            icon: const Icon(
+                              Icons.done,
+                              size: 25,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(),
               ],
             ),
     );

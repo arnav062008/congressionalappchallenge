@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -147,8 +148,8 @@ class _MapPointScreenState extends State<MapPointScreen> {
                                       if (locations.isNotEmpty) {
                                         Location location = locations.first;
                                         LatLng position = LatLng(
-                                          location.latitude!,
-                                          location.longitude!,
+                                          location.latitude,
+                                          location.longitude,
                                         );
                                         _mapController?.animateCamera(
                                           CameraUpdate.newLatLng(position),
@@ -192,6 +193,13 @@ class _MapPointScreenState extends State<MapPointScreen> {
       },
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('_selectedLatitude', _selectedLatitude));
+    properties.add(DoubleProperty('_selectedLongitude', _selectedLongitude));
+  }
 }
 
 class MapPoint {
@@ -206,4 +214,3 @@ class MapPoint {
       required this.latitude,
       required this.longitude});
 }
-

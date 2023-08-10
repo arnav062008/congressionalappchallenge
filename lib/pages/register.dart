@@ -17,14 +17,39 @@ class _RegisterState extends State<Register> {
 
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-  Future<void> addUser(name, email, password) {
-    return FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        )
-        .then((value) => print("User Signed In"))
-        .catchError((error) => print("Failed to add user: $error"));
+  Future<void> addUser(String name, String email, String password) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      String userId = userCredential.user?.uid ?? "";
+
+      await users.doc(userId).set({
+        'name': name,
+        'email': email,
+      });
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Register Failed'),
+            content: Text("$error"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override

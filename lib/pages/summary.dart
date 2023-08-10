@@ -17,7 +17,7 @@ class _SummaryState extends State<Summary> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(),
+      bottomNavigationBar: const BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -754,6 +754,8 @@ class _CustomSwitchState extends State<CustomSwitch> {
 }
 
 class BottomNavigationBarWidget extends StatelessWidget {
+  const BottomNavigationBarWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;

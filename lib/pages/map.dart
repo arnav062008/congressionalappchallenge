@@ -110,13 +110,13 @@ class _MapScreenState extends State<MapScreen> {
                 ),
                 Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
                     Center(
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.8,
-                        color: Color(0xAAFFFFF),
+                        color: const Color(0x0aafffff),
                         child: TextField(
                           controller: _searchController,
                           decoration: InputDecoration(

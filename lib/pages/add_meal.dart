@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,19 @@ import 'settings.dart' as s;
 import 'summary.dart' as summary;
 
 class MealAdd extends StatefulWidget {
-  const MealAdd({Key? key, this.latitude, this.longitude}) : super(key: key);
+  const MealAdd(
+      {Key? key,
+      this.latitude,
+      this.longitude,
+      this.desc,
+      this.date,
+      this.serving})
+      : super(key: key);
   final double? latitude;
   final double? longitude;
+  final String? desc;
+  final int? serving;
+  final DateTime? date;
 
   @override
   State<MealAdd> createState() => _MealAddState();
@@ -28,6 +39,7 @@ class _MealAddState extends State<MealAdd> {
   @override
   void initState() {
     super.initState();
+
     selectedDate = DateTime.now();
     _servingAmount.addListener(() {
       final text = _servingAmount.text;
@@ -43,27 +55,61 @@ class _MealAddState extends State<MealAdd> {
     });
   }
 
-  void _saveMealToFirebase() {
-    final String description = descriptionController.text;
-    final DateTime date = selectedDate;
-    final int servingAmount = int.parse(_servingAmount.text);
-    final double latitude = widget.latitude ?? 0.0;
-    final double longitude = widget.longitude ?? 0.0;
+  Future<bool> checkIfPhoneFieldExists() async {
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .get();
 
-    DocumentReference newMealRef = meals.doc();
-    newMealRef.set({
-      'description': description,
-      'date': date,
-      'latitude': latitude,
-      'longitude': longitude,
-      'servingAmount': servingAmount,
-    }).then((_) {
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data() as Map<String, dynamic>;
+      return data.containsKey('phone');
+    } else {
+      return false;
+    }
+  }
+
+  void _saveMealToFirebase() async {
+    final hasPhoneField = await checkIfPhoneFieldExists();
+
+    if (hasPhoneField) {
+      final newMealRef = meals.doc();
+      newMealRef.set({
+        'description': descriptionController.text,
+        'date': selectedDate,
+        'latitude': widget.latitude ?? 0.0,
+        'longitude': widget.longitude ?? 0.0,
+        'servingAmount': int.parse(_servingAmount.text),
+      }).then((_) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Success'),
+              content: const Text('Meal data saved!'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }).catchError((error) {
+        if (kDebugMode) {
+          print('Error adding meal: $error');
+        }
+      });
+    } else {
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Meal data saved!'),
+            title: const Text('More Details Must be Provided'),
+            content: const Text("Go To Settings under More Details"),
             actions: [
               TextButton(
                 onPressed: () {
@@ -75,17 +121,14 @@ class _MealAddState extends State<MealAdd> {
           );
         },
       );
-    }).catchError((error) {
-      if (kDebugMode) {
-        print('Error adding meal: $error');
-      }
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),

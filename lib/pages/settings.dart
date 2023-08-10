@@ -14,7 +14,7 @@ class Settings extends StatelessWidget {
     final screenHeight = mediaQuery.size.height;
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(),
+      bottomNavigationBar: const BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),
       body: Center(
         child: Container(
@@ -158,6 +158,8 @@ class Settings extends StatelessWidget {
 }
 
 class BottomNavigationBarWidget extends StatelessWidget {
+  const BottomNavigationBarWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;

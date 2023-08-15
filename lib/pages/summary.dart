@@ -1,5 +1,5 @@
 import 'package:congressionalappchallenge/pages/add_meal.dart';
-import 'package:congressionalappchallenge/pages/settings.dart';
+import 'package:congressionalappchallenge/pages/settings_pages/settings.dart';
 import 'package:flutter/material.dart';
 
 import 'meal_locate.dart';

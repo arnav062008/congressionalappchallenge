@@ -48,7 +48,6 @@ class _MapPointScreenState extends State<MapPointScreen> {
 
       return mapPoints;
     } catch (e) {
-      print('Error fetching data: $e');
       return []; // Handle error here or return an empty list.
     }
   }
@@ -60,7 +59,6 @@ class _MapPointScreenState extends State<MapPointScreen> {
     getMapPointsFromFirestore().then((mapPoints) {
       setState(() {
         _mapPoints = mapPoints;
-        print(_mapPoints.length);
       });
     });
   }
@@ -113,7 +111,7 @@ class _MapPointScreenState extends State<MapPointScreen> {
                 ),
                 Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
                     Row(
@@ -134,7 +132,7 @@ class _MapPointScreenState extends State<MapPointScreen> {
                         Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
-                            color: Color(0xAAFFFFF),
+                            color: const Color(0x0aafffff),
                             child: TextField(
                               controller: _searchController,
                               decoration: InputDecoration(

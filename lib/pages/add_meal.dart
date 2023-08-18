@@ -17,23 +17,30 @@ class MealAdd extends StatefulWidget {
       this.longitude,
       this.desc,
       this.date,
-      this.serving})
+      this.serving,
+      this.descr,
+      this.dates,
+      this.serve})
       : super(key: key);
   final double? latitude;
   final double? longitude;
   final String? desc;
   final int? serving;
   final DateTime? date;
-
+  final String? descr;
+  final DateTime? dates;
+  final String? serve;
   @override
   State<MealAdd> createState() => _MealAddState();
 }
 
 class _MealAddState extends State<MealAdd> {
-  final TextEditingController descriptionController = TextEditingController();
-  late DateTime selectedDate;
+  late final TextEditingController descriptionController =
+      TextEditingController(text: widget.descr);
+  late DateTime? selectedDate = widget.date ?? DateTime.now();
   late int servingAmounts = 1;
-  final TextEditingController _servingAmount = TextEditingController();
+  late final TextEditingController _servingAmount =
+      TextEditingController(text: widget.serve);
   CollectionReference meals = FirebaseFirestore.instance.collection('meals');
 
   @override
@@ -80,6 +87,7 @@ class _MealAddState extends State<MealAdd> {
         'latitude': widget.latitude ?? 0.0,
         'longitude': widget.longitude ?? 0.0,
         'servingAmount': int.parse(_servingAmount.text),
+        'uid': FirebaseAuth.instance.currentUser?.uid,
       }).then((_) {
         showDialog(
           context: context,

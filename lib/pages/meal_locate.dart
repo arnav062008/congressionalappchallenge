@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -7,7 +8,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as l;
 
 class MapPointScreen extends StatefulWidget {
-  const MapPointScreen({super.key});
+  const MapPointScreen({Key? key, this.desc, this.date, this.serve})
+      : super(key: key);
+  final String? desc;
+  final DateTime? date;
+  final String? serve;
 
   @override
   _MapPointScreenState createState() => _MapPointScreenState();
@@ -17,13 +22,10 @@ class _MapPointScreenState extends State<MapPointScreen> {
   GoogleMapController? _mapController;
   LatLng? _initialPosition;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<MapPoint> _mapPoints = []; // Initialize an empty list
-  double? _selectedLatitude;
-  double? _selectedLongitude;
-
+  List<MapPoint> _mapPoints = [];
   final TextEditingController _searchController = TextEditingController();
 
-  Future<List<MapPoint>> getMapPointsFromFirestore() async {
+  Future<void> getMapPointsFromFirestore() async {
     try {
       QuerySnapshot querySnapshot = await _firestore.collection("meals").get();
       List<MapPoint> mapPoints = [];
@@ -32,11 +34,9 @@ class _MapPointScreenState extends State<MapPointScreen> {
         if (documentSnapshot.exists) {
           Map<String, dynamic> data =
               documentSnapshot.data() as Map<String, dynamic>;
-          if (data.containsKey("servingAmount") &&
-              data.containsKey("latitude") &&
-              data.containsKey("longitude") &&
-              data.containsKey("description")) {
+          if (_isValidMapPointData(data)) {
             mapPoints.add(MapPoint(
+              uid: data['uid'],
               servingAmount: data["servingAmount"],
               latitude: data["latitude"],
               longitude: data["longitude"],
@@ -46,21 +46,29 @@ class _MapPointScreenState extends State<MapPointScreen> {
         }
       }
 
-      return mapPoints;
+      setState(() {
+        _mapPoints = mapPoints;
+      });
     } catch (e) {
-      return []; // Handle error here or return an empty list.
+      if (kDebugMode) {
+        print("Error: $e");
+      }
     }
+  }
+
+  bool _isValidMapPointData(Map<String, dynamic> data) {
+    return data.containsKey("servingAmount") &&
+        data.containsKey("latitude") &&
+        data.containsKey("longitude") &&
+        data.containsKey("description") &&
+        data.containsKey("uid");
   }
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
-    getMapPointsFromFirestore().then((mapPoints) {
-      setState(() {
-        _mapPoints = mapPoints;
-      });
-    });
+    getMapPointsFromFirestore();
   }
 
   void _getCurrentLocation() async {
@@ -74,10 +82,9 @@ class _MapPointScreenState extends State<MapPointScreen> {
         _initialPosition = LatLng(position.latitude, position.longitude);
       });
     } else {
-      // If permission is not granted, request it.
       final permissionStatus = await location.requestPermission();
       if (permissionStatus == l.PermissionStatus.granted) {
-        _getCurrentLocation(); // Retry getting the current location after permission is granted.
+        _getCurrentLocation();
       }
     }
   }
@@ -100,20 +107,17 @@ class _MapPointScreenState extends State<MapPointScreen> {
                   ),
                   markers: _mapPoints.map((point) {
                     return Marker(
-                      markerId: MarkerId(point.servingAmount.toString()),
+                      markerId: MarkerId(point.uid),
                       position: LatLng(point.latitude, point.longitude),
                       onTap: () {
-                        _showPointDetails(
-                            point); // Show point details when marker is tapped
+                        _showDetailsPopup(point);
                       },
                     );
                   }).toSet(),
                 ),
                 Column(
                   children: [
-                    const SizedBox(
-                      height: 50,
-                    ),
+                    const SizedBox(height: 50),
                     Row(
                       children: [
                         Align(
@@ -121,22 +125,28 @@ class _MapPointScreenState extends State<MapPointScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: IconButton(
-                              onPressed: () => Navigator.pop(context),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                               icon: const Icon(
                                 Icons.arrow_back_ios_new_rounded,
                                 size: 25,
+                                color: Colors.white,
                               ),
                             ),
                           ),
                         ),
                         Center(
                           child: Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            width: mediaQuery.size.width * 0.8,
                             color: const Color(0x0aafffff),
                             child: TextField(
                               controller: _searchController,
                               decoration: InputDecoration(
                                 hintText: 'Search for an address',
+                                hintStyle: const TextStyle(
+                                  color: Color(0xFF169C89),
+                                ),
                                 suffixIcon: IconButton(
                                   onPressed: () async {
                                     String query = _searchController.text;
@@ -171,32 +181,15 @@ class _MapPointScreenState extends State<MapPointScreen> {
     );
   }
 
-  void _showPointDetails(MapPoint point) {
-    showDialog(
+  void _showDetailsPopup(MapPoint mapPoint) {
+    showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(point.servingAmount.toString()),
-          content: Text(
-              "Latitude: ${point.latitude}\nLongitude: ${point.longitude}"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
+        return DetailsPopup(
+          mapPoint: mapPoint,
         );
       },
     );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DoubleProperty('_selectedLatitude', _selectedLatitude));
-    properties.add(DoubleProperty('_selectedLongitude', _selectedLongitude));
   }
 }
 
@@ -205,10 +198,244 @@ class MapPoint {
   final double latitude;
   final double longitude;
   final String description;
+  final String uid;
 
-  MapPoint(
-      {required this.description,
-      required this.servingAmount,
-      required this.latitude,
-      required this.longitude});
+  MapPoint({
+    required this.description,
+    required this.servingAmount,
+    required this.latitude,
+    required this.longitude,
+    required this.uid,
+  });
+}
+
+class DetailsPopup extends StatefulWidget {
+  const DetailsPopup({Key? key, required this.mapPoint}) : super(key: key);
+  final MapPoint mapPoint;
+
+  @override
+  _DetailsPopupState createState() => _DetailsPopupState();
+}
+
+class _DetailsPopupState extends State<DetailsPopup> {
+  bool _isContainerVisible = false;
+  String allergen = "N/A";
+  String phoneNum = "N/A";
+
+  void getAllergensForUser() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+    DocumentSnapshot userDocument = await usersCollection.doc(uid).get();
+
+    if (userDocument.exists) {
+      Map<String, dynamic> userData =
+          userDocument.data() as Map<String, dynamic>;
+      setState(() {
+        allergen = userData["allergens"];
+        phoneNum = userData["phone"];
+      });
+    }
+  }
+
+  Future<String> getAddressFromLatLng(double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks[0];
+        String address =
+            "${placemark.street}, ${placemark.locality}, ${placemark.administrativeArea}, ${placemark.country}";
+        return address;
+      } else {
+        return "No address found";
+      }
+    } catch (e) {
+      return "Error: $e";
+    }
+  }
+
+  void _toggleContainerVisibility() {
+    setState(() {
+      _isContainerVisible = !_isContainerVisible;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAllergensForUser();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            color: const Color(0xFF2E343B),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Meal Info: ",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Serves: ${widget.mapPoint.servingAmount}",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Description: ${widget.mapPoint.description.length > 20 ? "${widget.mapPoint.description.substring(0, 17)}..." : widget.mapPoint.description}",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "Extra Info: ",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Allergen Information: $allergen",
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Phone Number: $phoneNum",
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Email: ${FirebaseAuth.instance.currentUser?.email}",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            top: 0,
+            bottom: _isContainerVisible
+                ? 0
+                : MediaQuery.of(context).size.height / 2,
+            right: _isContainerVisible
+                ? 0
+                : -MediaQuery.of(context).size.width / 2,
+            child: GestureDetector(
+              onTap: _toggleContainerVisibility,
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                color: Colors.green,
+                child: Center(
+                  child: Text(
+                    "Serves ${widget.mapPoint.servingAmount.toString()}",
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2E343B),
+        shadowColor: const Color(0xFF2E343B),
+        elevation: 100,
+        title: FutureBuilder(
+          future: getAddressFromLatLng(
+              widget.mapPoint.latitude, widget.mapPoint.longitude),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return const Text('N/A');
+            } else {
+              return Text("${snapshot.data}");
+            }
+          },
+        ),
+      ),
+    );
+  }
 }

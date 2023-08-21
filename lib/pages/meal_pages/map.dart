@@ -1,4 +1,4 @@
-import 'package:congressionalappchallenge/pages/add_meal.dart';
+import 'package:congressionalappchallenge/pages/meal_pages/add_meal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';

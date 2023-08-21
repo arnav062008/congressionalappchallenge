@@ -1,10 +1,8 @@
-import 'package:congressionalappchallenge/pages/login.dart';
+import 'package:congressionalappchallenge/pages/onboarding/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../add_meal.dart';
-import '../meal_locate.dart';
-import '../summary.dart';
+import '../../components/bottom_nav_bar.dart';
 import 'meal_details.dart';
 
 class Settings extends StatelessWidget {
@@ -22,7 +20,7 @@ class Settings extends StatelessWidget {
     }
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(iconSize: iconSize),
+      bottomNavigationBar: BottomNavigationBarWidget(),
       backgroundColor: const Color(0xFF22282C),
       body: Center(
         child: Container(
@@ -167,85 +165,6 @@ class Settings extends StatelessWidget {
           size: 35,
           color: Colors.white,
         ),
-      ),
-    );
-  }
-}
-
-class BottomNavigationBarWidget extends StatelessWidget {
-  final double iconSize;
-
-  const BottomNavigationBarWidget({required this.iconSize, Key? key})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
-    return Container(
-      width: width * 0.866,
-      height: MediaQuery.of(context).size.height * 0.13,
-      decoration: const ShapeDecoration(
-        color: Color(0xFF2E343B),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildIconButton(
-            icon: Icons.house_outlined,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Summary()),
-              );
-            },
-          ),
-          _buildIconButton(
-            icon: Icons.map_outlined,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MapPointScreen()),
-              );
-            },
-          ),
-          _buildIconButton(
-            icon: Icons.add_circle_outline,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MealAdd()),
-              );
-            },
-          ),
-          _buildIconButton(
-            icon: Icons.settings_outlined,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Settings()),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildIconButton(
-      {required IconData icon, required VoidCallback onPressed}) {
-    return IconButton(
-      onPressed: onPressed,
-      icon: Icon(
-        icon,
-        size: iconSize,
-        color: Colors.white,
       ),
     );
   }

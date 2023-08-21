@@ -1,50 +1,61 @@
-import 'package:congressionalappchallenge/pages/summary.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-import 'register.dart';
-
-class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+class Register extends StatefulWidget {
+  const Register({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _RegisterState extends State<Register> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirm = TextEditingController();
+
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+  Future<void> addUser(String name, String email, String password) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      String userId = userCredential.user?.uid ?? "";
+
+      await users.doc(userId).set({
+        'name': name,
+        'email': email,
+      });
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Register Failed'),
+            content: Text("$error"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
-    Future<void> signIn(String email, String password) async {
-      try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Summary()),
-        );
-      } catch (error) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return BasicAlert(
-              text: error.toString(),
-              title: "Failed To Login",
-            );
-          },
-        );
-      }
-    }
-
     return Scaffold(
       backgroundColor: const Color(0xFF22282C),
       body: Column(
@@ -124,129 +135,40 @@ class _SignInPageState extends State<SignInPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: width * 0.9,
-                                  height: height * 0.07,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(width * 0.02),
-                                    border: Border.all(
-                                        color: const Color(0xffdddddd),
-                                        width: width * 0.01),
-                                    color: const Color(0xfff7f7f7),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 0.04),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: width * 0.01),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              width * 0.05, 0, 0, 0),
-                                          child: Icon(
-                                            Icons.email_outlined,
-                                            color: const Color(0xffc6c6c6),
-                                            size: width * 0.06,
-                                          ),
-                                        ),
-                                        SizedBox(width: width * 0.015),
-                                        Expanded(
-                                          child: TextField(
-                                            style: TextStyle(
-                                              color: const Color(0xffc6c6c6),
-                                              fontSize: width * 0.04,
-                                            ),
-                                            controller: emailController,
-                                            decoration: InputDecoration(
-                                              disabledBorder: InputBorder.none,
-                                              enabledBorder: InputBorder.none,
-                                              errorBorder: InputBorder.none,
-                                              focusedBorder: InputBorder.none,
-                                              focusedErrorBorder:
-                                                  InputBorder.none,
-                                              hintText: 'Email Address',
-                                              border: InputBorder.none,
-                                              hintStyle: TextStyle(
-                                                color: const Color(0xffc6c6c6)
-                                                    .withOpacity(0.5),
-                                                fontSize: width * 0.04,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                TextBox(
+                                  obsc: false,
+                                  width: width,
+                                  height: height,
+                                  nameController: _nameController,
+                                  icon: Icons.account_circle_outlined,
+                                  text: "Name: ",
                                 ),
                                 SizedBox(height: height * 0.01),
-                                Container(
-                                  width: width * 0.9,
-                                  height: height * 0.07,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(width * 0.02),
-                                    border: Border.all(
-                                        color: const Color(0xffdddddd),
-                                        width: width * 0.01),
-                                    color: const Color(0xfff7f7f7),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 0.04),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: width * 0.01),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              width * 0.05, 0, 0, 0),
-                                          child: Icon(
-                                            Icons.lock_outline,
-                                            color: const Color(0xffc6c6c6),
-                                            size: width * 0.06,
-                                          ),
-                                        ),
-                                        SizedBox(width: width * 0.015),
-                                        Expanded(
-                                          child: TextField(
-                                            style: TextStyle(
-                                              color: const Color(0xffc6c6c6),
-                                              fontSize: width * 0.04,
-                                            ),
-                                            obscureText: true,
-                                            controller: passwordController,
-                                            decoration: InputDecoration(
-                                              disabledBorder: InputBorder.none,
-                                              enabledBorder: InputBorder.none,
-                                              errorBorder: InputBorder.none,
-                                              focusedBorder: InputBorder.none,
-                                              focusedErrorBorder:
-                                                  InputBorder.none,
-                                              hintText: 'Password',
-                                              border: InputBorder.none,
-                                              hintStyle: TextStyle(
-                                                color: const Color(0xffc6c6c6)
-                                                    .withOpacity(0.5),
-                                                fontSize: width * 0.04,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                TextBox(
+                                  obsc: false,
+                                  width: width,
+                                  height: height,
+                                  nameController: _emailController,
+                                  icon: Icons.email_outlined,
+                                  text: "Email Address: ",
+                                ),
+                                SizedBox(height: height * 0.01),
+                                TextBox(
+                                  obsc: true,
+                                  width: width,
+                                  height: height,
+                                  nameController: _passwordController,
+                                  icon: Icons.lock_outline,
+                                  text: "Password: ",
+                                ),
+                                SizedBox(height: height * 0.01),
+                                TextBox(
+                                  obsc: true,
+                                  width: width,
+                                  height: height,
+                                  nameController: _confirm,
+                                  icon: Icons.lock_outline,
+                                  text: "Confirm Password: ",
                                 ),
                                 SizedBox(height: height * 0.01),
                                 Container(
@@ -277,7 +199,7 @@ class _SignInPageState extends State<SignInPage> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Log in",
+                                          "Register",
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: width * 0.05,
@@ -286,9 +208,69 @@ class _SignInPageState extends State<SignInPage> {
                                       ],
                                     ),
                                   ),
-                                  onTap: () {
-                                    signIn(emailController.text,
-                                        passwordController.text);
+                                  onTap: () async {
+                                    final bool emailValid = RegExp(
+                                            r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                        .hasMatch(_emailController.text);
+                                    if (emailValid == true) {
+                                      if (_passwordController.text ==
+                                          _confirm.text) {
+                                        if (_passwordController.text.length >
+                                            5) {
+                                          if (_nameController.text.isEmpty ==
+                                              false) {
+                                            addUser(
+                                                _nameController.text,
+                                                _emailController.text,
+                                                _passwordController.text);
+                                            Navigator.pop(context);
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const BasicAlert(
+                                                  text: "Name Field is Empty",
+                                                  title:
+                                                      "Error in User Creation",
+                                                );
+                                              },
+                                            );
+                                          }
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const BasicAlert(
+                                                text:
+                                                    "Password must be at least 6 characters long",
+                                                title: "Error in User Creation",
+                                              );
+                                            },
+                                          );
+                                        }
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const BasicAlert(
+                                              text:
+                                                  "Password and Confirm Password Don't Match",
+                                              title: "Error in User Creation",
+                                            );
+                                          },
+                                        );
+                                      }
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return const BasicAlert(
+                                            text: "Email is Invalid",
+                                            title: "Error in User Creation",
+                                          );
+                                        },
+                                      );
+                                    }
                                   },
                                 ),
                               ],
@@ -335,40 +317,10 @@ class _SignInPageState extends State<SignInPage> {
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                    width: width * 0.25,
-                                    height: height * 0.06,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(width * 0.02),
-                                      border: Border.all(
-                                          color: const Color(0xffdddddd),
-                                          width: width * 0.01),
-                                      color: const Color(0xfff7f7f7),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 0.04),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: width * 0.04,
-                                          height: height * 0.04,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                width * 0.02),
-                                          ),
-                                          child: GestureDetector(
-                                              onTap: () {},
-                                              child: FlutterLogo(
-                                                  size: width * 0.04)),
-                                        ),
-                                      ],
-                                    ),
+                                  AlternateSignInMethods(
+                                    width: width,
+                                    height: height,
+                                    image: "google.png",
                                   ),
                                   Container(
                                     width: width * 0.25,
@@ -443,9 +395,6 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                       ),
                       SizedBox(height: height * 0.03),
-                      SizedBox(
-                        width: width * 0.9,
-                      ),
                     ],
                   ),
                 ),
@@ -462,20 +411,17 @@ class _SignInPageState extends State<SignInPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
-                  "Don’t have an account? ",
+                  "Already have an account? ",
                   style: TextStyle(
                     fontSize: 16,
                   ),
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Register()),
-                    );
+                    Navigator.pop(context);
                   },
                   child: const Text(
-                    "Register",
+                    "Sign In",
                     style: TextStyle(
                       fontSize: 16,
                       color: Color(0xff169C89),
@@ -511,6 +457,122 @@ class BasicAlert extends StatelessWidget {
           child: const Text("Ok"),
         ),
       ],
+    );
+  }
+}
+
+class AlternateSignInMethods extends StatelessWidget {
+  const AlternateSignInMethods({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.image,
+  });
+
+  final double width;
+  final double height;
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width * 0.25,
+      height: height * 0.06,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(width * 0.02),
+        border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+        color: const Color(0xfff7f7f7),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 0.04),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: width * 0.04,
+            height: height * 0.04,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(width * 0.02),
+            ),
+            child: Image.asset(image),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TextBox extends StatelessWidget {
+  const TextBox({
+    super.key,
+    required this.obsc,
+    required this.width,
+    required this.height,
+    required this.icon,
+    required TextEditingController nameController,
+    required this.text,
+  }) : _nameController = nameController;
+  final String text;
+  final bool obsc;
+  final double width;
+  final double height;
+  final IconData icon;
+  final TextEditingController _nameController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width * 0.9,
+      height: height * 0.07,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(width * 0.02),
+        border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
+        color: const Color(0xfff7f7f7),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 0.04),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: width * 0.01),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
+              child: Icon(
+                icon,
+                color: const Color(0xff858585),
+                size: width * 0.06,
+              ),
+            ),
+            SizedBox(width: width * 0.015),
+            Expanded(
+              child: TextField(
+                obscureText: obsc,
+                style: TextStyle(
+                  color: const Color(0xff858585),
+                  fontSize: width * 0.04,
+                ),
+                controller: _nameController,
+                decoration: InputDecoration(
+                  disabledBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  focusedErrorBorder: InputBorder.none,
+                  hintText: text,
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(
+                    color: const Color(0xff858585).withOpacity(0.5),
+                    fontSize: width * 0.04,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

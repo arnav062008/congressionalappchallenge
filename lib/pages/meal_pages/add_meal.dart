@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:congressionalappchallenge/constants.dart';
+import 'package:congressionalappchallenge/pages/meal_pages/meal_history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../components/bottom_nav_bar.dart';
 import 'map.dart';
-import 'meal_locate.dart';
-import 'settings_pages/settings.dart' as s;
-import 'summary.dart' as summary;
 
 class MealAdd extends StatefulWidget {
   const MealAdd(
@@ -139,7 +139,7 @@ class _MealAddState extends State<MealAdd> {
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBarWidget(),
-      backgroundColor: const Color(0xFF22282C),
+      backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [
           const TopBarWidget(),
@@ -150,7 +150,7 @@ class _MealAddState extends State<MealAdd> {
             width: width * 0.8,
             height: height * 0.6,
             decoration: ShapeDecoration(
-              color: const Color(0xFF2E343B),
+              color: AppColors.cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(70),
               ),
@@ -174,7 +174,7 @@ class _MealAddState extends State<MealAdd> {
                       const Text(
                         'Set time',
                         style: TextStyle(
-                          color: Color(0xFFFEFCFB),
+                          color: AppColors.textColor,
                           fontSize: 20,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w600,
@@ -210,14 +210,14 @@ class _MealAddState extends State<MealAdd> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 20),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF39ACE7),
+                                color: AppColors.primaryColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Text(
                                 'Save',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Color(0xFFFEFCFB),
+                                  color: AppColors.textColor,
                                   fontSize: 16,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w500,
@@ -236,7 +236,7 @@ class _MealAddState extends State<MealAdd> {
                                 width: width * 0.4,
                                 height: height * 0.06,
                                 decoration: ShapeDecoration(
-                                  color: const Color(0xFFFEFCFB),
+                                  color: AppColors.textColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -302,86 +302,6 @@ class _MealAddState extends State<MealAdd> {
   }
 }
 
-class BottomNavigationBarWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final iconSize = width / 10;
-
-    return Container(
-      width: width * 0.866,
-      height: MediaQuery.of(context).size.height * 0.13,
-      decoration: const ShapeDecoration(
-        color: Color(0xFF2E343B),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const summary.Summary()),
-              );
-            },
-            icon: Icon(
-              Icons.house_outlined,
-              size: iconSize,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MapPointScreen()),
-              );
-            },
-            icon: Icon(
-              Icons.map_outlined,
-              size: iconSize,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MealAdd()),
-              );
-            },
-            icon: Icon(
-              Icons.add_circle_outline,
-              size: iconSize,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const s.Settings()),
-              );
-            },
-            icon: Icon(
-              Icons.settings_outlined,
-              size: iconSize,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class TopBarWidget extends StatelessWidget {
   const TopBarWidget({super.key});
 
@@ -390,20 +310,43 @@ class TopBarWidget extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
 
     return Padding(
-      padding: EdgeInsets.all(width * 0.08),
-      child: Align(
-        alignment: Alignment.topRight,
-        child: Container(
-          width: width * 0.1,
-          height: width * 0.1,
-          clipBehavior: Clip.antiAlias,
-          decoration: const BoxDecoration(),
-          child: const Icon(
-            Icons.account_circle_outlined,
-            color: Colors.white,
-            size: 35,
+      padding: EdgeInsets.fromLTRB(
+          width * 0.08, width * 0.1, width * 0.08, width * 0.08),
+      child: Row(
+        children: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MealHistory(),
+                  ),
+                );
+              },
+            ),
           ),
-        ),
+          Spacer(),
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: width * 0.1,
+              height: width * 0.1,
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(),
+              child: const Icon(
+                Icons.account_circle_outlined,
+                color: Colors.white,
+                size: 35,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -424,7 +367,7 @@ class TitleWidget extends StatelessWidget {
           'Add Meals to be Donated',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Color(0xFFFEFCFB),
+            color: AppColors.textColor,
             fontSize: 20,
             fontFamily: 'Lato',
             fontWeight: FontWeight.w900,
@@ -457,7 +400,7 @@ class TextBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: ShapeDecoration(
-        color: const Color(0xFFFEFCFB),
+        color: AppColors.textColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
@@ -473,7 +416,7 @@ class TextBox extends StatelessWidget {
             border: InputBorder.none,
             hintText: texts,
             hintStyle: const TextStyle(
-              color: Color(0xFF555553),
+              color: AppColors.hintTextColor,
               fontSize: 15,
               fontFamily: 'Lato',
               fontWeight: FontWeight.w600,

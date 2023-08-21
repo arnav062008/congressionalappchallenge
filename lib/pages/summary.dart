@@ -1,8 +1,5 @@
-import 'package:congressionalappchallenge/pages/add_meal.dart';
-import 'package:congressionalappchallenge/pages/settings_pages/settings.dart';
+import 'package:congressionalappchallenge/components/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
-
-import 'meal_locate.dart';
 
 class Summary extends StatefulWidget {
   const Summary({super.key});
@@ -746,87 +743,6 @@ class _CustomSwitchState extends State<CustomSwitch> {
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class BottomNavigationBarWidget extends StatelessWidget {
-  const BottomNavigationBarWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final iconSize = width / 10;
-
-    return Container(
-      width: width * 0.866,
-      height: MediaQuery.of(context).size.height * 0.13,
-      decoration: const ShapeDecoration(
-        color: Color(0xFF2E343B),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Summary()),
-              );
-            },
-            icon: Icon(
-              Icons.house_outlined,
-              size: iconSize,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MapPointScreen()),
-              );
-            },
-            icon: Icon(
-              Icons.map_outlined,
-              size: iconSize,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MealAdd()),
-              );
-            },
-            icon: Icon(
-              Icons.add_circle_outline,
-              size: iconSize,
-              color: Colors.white,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Settings()),
-              );
-            },
-            icon: Icon(
-              Icons.settings_outlined,
-              size: iconSize,
-              color: Colors.white,
-            ),
           ),
         ],
       ),

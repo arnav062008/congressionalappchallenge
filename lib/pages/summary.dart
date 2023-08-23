@@ -1,21 +1,41 @@
 import 'package:congressionalappchallenge/components/bottom_nav_bar.dart';
+import 'package:congressionalappchallenge/constants.dart';
 import 'package:flutter/material.dart';
 
 class Summary extends StatefulWidget {
-  const Summary({super.key});
+  const Summary({Key? key}) : super(key: key);
 
   @override
   State<Summary> createState() => _SummaryState();
 }
 
 class _SummaryState extends State<Summary> {
+  bool _isWeeklySelected = true;
+  bool _isMonthlySelected = false;
+
+  void _toggleSelectionWeek() {
+    setState(() {
+      _isWeeklySelected = true;
+      _isMonthlySelected = false;
+    });
+  }
+
+  void _toggleSelectionMonth() {
+    setState(() {
+      _isWeeklySelected = false;
+      _isMonthlySelected = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      bottomNavigationBar: const BottomNavigationBarWidget(),
-      backgroundColor: const Color(0xFF22282C),
+      bottomNavigationBar: const BottomNavigationBarWidget(
+        currentTab: TabItem.Summary,
+      ),
+      backgroundColor: AppColors.backgroundColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -36,32 +56,34 @@ class _SummaryState extends State<Summary> {
               ),
             ),
           ),
-          const SizedBox(
-            width: 280,
-            child: Text(
+          SizedBox(
+            width: width * 0.8,
+            child: const Text(
               'Great Job, You Have Donated 27 Meals This Week',
-              textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFFFEFCFB),
+                color: AppColors.textColor,
                 fontSize: 20,
                 fontFamily: 'Lato',
                 fontWeight: FontWeight.w900,
               ),
             ),
           ),
+          SizedBox(
+            height: height * 0.025,
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
-              width: 177,
+              width: width * 0.5,
               height: 43,
               child: Stack(
                 children: [
                   Positioned(
-                    left: 6,
-                    top: 2,
+                    left: 0,
+                    top: 0,
                     child: Container(
-                      width: 171,
-                      height: 41,
+                      width: width * 0.5,
+                      height: 43,
                       decoration: ShapeDecoration(
                         color: const Color(0xFF23292E),
                         shape: RoundedRectangleBorder(
@@ -72,519 +94,21 @@ class _SummaryState extends State<Summary> {
                       ),
                     ),
                   ),
-                  const CustomSwitch(),
+                  CustomSwitch(
+                    isWeeklySelected: _isWeeklySelected,
+                    isMonthlySelected: _isMonthlySelected,
+                    onToggleWeek: _toggleSelectionWeek,
+                    onToggleMonth: _toggleSelectionMonth,
+                  ),
                 ],
               ),
             ),
           ),
           SizedBox(
-            width: 366.06,
-            height: 169.30,
-            child: Stack(
-              children: [
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  child: SizedBox(
-                    width: 366.06,
-                    height: 169.30,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          left: 2.89,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 158.72,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Positioned(
-                          left: 0.72,
-                          top: 161.36,
-                          child: SizedBox(
-                            width: 5.05,
-                            height: 7.94,
-                            child: Text(
-                              '0',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFEFCFB),
-                                fontSize: 10,
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w900,
-                                height: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 54.46,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 158.72,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Positioned(
-                          left: 53.02,
-                          top: 161.36,
-                          child: SizedBox(
-                            width: 3.61,
-                            height: 7.94,
-                            child: Text(
-                              '1',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFEFCFB),
-                                fontSize: 10,
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w900,
-                                height: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 106.03,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 158.72,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Positioned(
-                          left: 103.87,
-                          top: 161.36,
-                          child: SizedBox(
-                            width: 5.05,
-                            height: 7.94,
-                            child: Text(
-                              '2',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFEFCFB),
-                                fontSize: 10,
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w900,
-                                height: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 157.60,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 158.72,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Positioned(
-                          left: 155.44,
-                          top: 161.36,
-                          child: SizedBox(
-                            width: 5.05,
-                            height: 7.94,
-                            child: Text(
-                              '3',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFEFCFB),
-                                fontSize: 10,
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w900,
-                                height: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 209.18,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 158.72,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Positioned(
-                          left: 207.01,
-                          top: 161.36,
-                          child: SizedBox(
-                            width: 5.05,
-                            height: 7.94,
-                            child: Text(
-                              '4',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFEFCFB),
-                                fontSize: 10,
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w900,
-                                height: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 260.75,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 158.72,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Positioned(
-                          left: 258.58,
-                          top: 161.36,
-                          child: SizedBox(
-                            width: 5.05,
-                            height: 7.94,
-                            child: Text(
-                              '5',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFEFCFB),
-                                fontSize: 10,
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w900,
-                                height: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 312.32,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 158.72,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Positioned(
-                          left: 310.15,
-                          top: 161.36,
-                          child: SizedBox(
-                            width: 5.05,
-                            height: 7.94,
-                            child: Text(
-                              '6',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFEFCFB),
-                                fontSize: 10,
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w900,
-                                height: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 363.89,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 158.72,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Positioned(
-                          left: 361.73,
-                          top: 161.36,
-                          child: SizedBox(
-                            width: 4.33,
-                            height: 7.94,
-                            child: Text(
-                              '7',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFEFCFB),
-                                fontSize: 10,
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w900,
-                                height: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 159.25,
-                          child: Container(
-                            width: 361,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 136.57,
-                          child: Container(
-                            width: 361,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 113.90,
-                          child: Container(
-                            width: 361,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 91.22,
-                          child: Container(
-                            width: 361,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 68.55,
-                          child: Container(
-                            width: 361,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 45.88,
-                          child: Container(
-                            width: 361,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 23.20,
-                          child: Container(
-                            width: 361,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 0.53,
-                          child: Container(
-                            width: 361,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 0,
-                          top: 161.36,
-                          child: Container(
-                            width: 363.89,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 0.50,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFF555553),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 2.89,
-                          top: 159.25,
-                          child: Transform(
-                            transform: Matrix4.identity()
-                              ..translate(0.0, 0.0)
-                              ..rotateZ(-1.57),
-                            child: Container(
-                              width: 159.25,
-                              decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    width: 0.50,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: Color(0xFF555553),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            height: height * 0.025,
           ),
           GridView.count(
             crossAxisCount: 2,
-            childAspectRatio: width / height * 4,
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             padding: const EdgeInsets.all(8.0),
@@ -599,7 +123,7 @@ class _SummaryState extends State<Summary> {
                     Text(
                       'Top Text $index',
                       style: const TextStyle(
-                        color: Color(0xFFFEFCFB),
+                        color: AppColors.textColor,
                         fontSize: 12,
                         fontFamily: 'Lato',
                         fontWeight: FontWeight.normal,
@@ -631,52 +155,35 @@ class _SummaryState extends State<Summary> {
   }
 }
 
-class CustomSwitch extends StatefulWidget {
-  const CustomSwitch({super.key});
+class CustomSwitch extends StatelessWidget {
+  final bool isWeeklySelected;
+  final bool isMonthlySelected;
+  final VoidCallback onToggleWeek;
+  final VoidCallback onToggleMonth;
 
-  @override
-  _CustomSwitchState createState() => _CustomSwitchState();
-}
-
-class _CustomSwitchState extends State<CustomSwitch> {
-  bool _isWeeklySelected = true;
-  bool _isMonthlySelected = false;
-
-  void _toggleSelectionWeek() {
-    setState(() {
-      _isWeeklySelected = true;
-      _isMonthlySelected = false;
-    });
-  }
-
-  void _toggleSelectionMonth() {
-    setState(() {
-      _isWeeklySelected = false;
-      _isMonthlySelected = true;
-    });
-  }
+  const CustomSwitch({
+    required this.isWeeklySelected,
+    required this.isMonthlySelected,
+    required this.onToggleWeek,
+    required this.onToggleMonth,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final width = MediaQuery.of(context).size.width;
+
+    return SizedBox(
       height: 41,
-      decoration: ShapeDecoration(
-        color: const Color(0xFF23292E),
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 0.50, color: Color(0xFF353B3F)),
-          borderRadius: BorderRadius.circular(78),
-        ),
-      ),
       child: Stack(
         children: [
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             top: 0,
-            left: _isWeeklySelected ? 0 : 85, // Adjust the position as needed
-            right: _isWeeklySelected ? 85 : 0, // Adjust the position as needed
+            left: isWeeklySelected ? 0 : width * 0.25,
+            right: isWeeklySelected ? width * 0.25 : 0,
             child: Container(
-              width: 85,
+              width: width * 0.25,
               height: 41,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(78),
@@ -688,7 +195,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: () => _toggleSelectionWeek(),
+                  onTap: onToggleWeek,
                   child: Container(
                     height: 41,
                     decoration: const BoxDecoration(
@@ -702,9 +209,9 @@ class _CustomSwitchState extends State<CustomSwitch> {
                         'Weekly',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: _isWeeklySelected
-                              ? const Color(0xFF555553)
-                              : const Color(0xFFFEFCFB),
+                          color: isWeeklySelected
+                              ? AppColors.hintTextColor
+                              : AppColors.textColor,
                           fontSize: 15,
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.w600,
@@ -716,7 +223,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
               ),
               Expanded(
                 child: GestureDetector(
-                  onTap: () => _toggleSelectionMonth(),
+                  onTap: onToggleMonth,
                   child: Container(
                     height: 41,
                     decoration: const BoxDecoration(
@@ -730,9 +237,9 @@ class _CustomSwitchState extends State<CustomSwitch> {
                         'Monthly',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: _isMonthlySelected
-                              ? const Color(0xFF555553)
-                              : const Color(0xFFFEFCFB),
+                          color: isMonthlySelected
+                              ? AppColors.hintTextColor
+                              : AppColors.textColor,
                           fontSize: 15,
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.w600,

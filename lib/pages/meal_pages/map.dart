@@ -1,4 +1,3 @@
-import 'package:congressionalappchallenge/pages/meal_pages/add_meal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -6,10 +5,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as l;
 
+import '../../constants.dart';
+import 'add_meal.dart';
+
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _MapScreenState createState() => _MapScreenState();
 }
 
@@ -39,10 +42,9 @@ class _MapScreenState extends State<MapScreen> {
         _initialPosition = LatLng(position.latitude, position.longitude);
       });
     } else {
-      // If permission is not granted, request it.
       final permissionStatus = await location.requestPermission();
       if (permissionStatus == l.PermissionStatus.granted) {
-        _getCurrentLocation(); // Retry getting the current location after permission is granted.
+        _getCurrentLocation();
       }
     }
   }
@@ -81,8 +83,11 @@ class _MapScreenState extends State<MapScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MealAdd(
-                latitude: _selectedLatitude, longitude: _selectedLongitude)),
+          builder: (context) => MealAdd(
+            latitude: _selectedLatitude,
+            longitude: _selectedLongitude,
+          ),
+        ),
       );
     }
   }
@@ -105,18 +110,15 @@ class _MapScreenState extends State<MapScreen> {
                     _mapController = controller;
                   },
                   markers: _markers,
-                  onTap: (position) =>
-                      _onMapDoubleTap(position), // Change onTap to onDoubleTap
+                  onTap: (position) => _onMapDoubleTap(position),
                 ),
                 Column(
                   children: [
-                    const SizedBox(
-                      height: 50,
-                    ),
+                    const SizedBox(height: 50),
                     Center(
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        color: const Color(0x0aafffff),
+                        width: mediaQuery.size.width * 0.8,
+                        color: AppColors.primaryColor.withOpacity(0.04),
                         child: TextField(
                           controller: _searchController,
                           decoration: InputDecoration(
@@ -130,8 +132,8 @@ class _MapScreenState extends State<MapScreen> {
                                   if (locations.isNotEmpty) {
                                     Location location = locations.first;
                                     LatLng position = LatLng(
-                                      location.latitude!,
-                                      location.longitude!,
+                                      location.latitude,
+                                      location.longitude,
                                     );
                                     _mapController?.animateCamera(
                                       CameraUpdate.newLatLng(position),

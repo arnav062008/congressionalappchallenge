@@ -138,7 +138,9 @@ class _MealAddState extends State<MealAdd> {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(),
+      bottomNavigationBar: const BottomNavigationBarWidget(
+        currentTab: TabItem.AddMeal,
+      ),
       backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [

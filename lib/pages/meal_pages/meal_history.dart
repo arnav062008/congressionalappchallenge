@@ -3,8 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/bottom_nav_bar.dart';
+import '../../constants.dart';
 
 class MealHistory extends StatefulWidget {
+  const MealHistory({super.key});
+
   @override
   State<MealHistory> createState() => _MealHistoryState();
 }
@@ -13,15 +16,18 @@ class _MealHistoryState extends State<MealHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(),
-      backgroundColor: const Color(0xFF22282C),
+      bottomNavigationBar: const BottomNavigationBarWidget(
+        currentTab: TabItem.AddMeal,
+      ),
+      backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [
           TopBarWidget(),
           TitleWidget(),
           Expanded(
             child: MealDisplay(
-                currentUserUid: FirebaseAuth.instance.currentUser!.uid),
+              currentUserUid: FirebaseAuth.instance.currentUser!.uid,
+            ),
           ),
         ],
       ),
@@ -54,8 +60,8 @@ class MealDisplay extends StatelessWidget {
 
         return ListView(
           children: snapshot.data!.docs.map((document) {
-            final description = document['description'].toString() ?? '';
-            final servingAmount = document['servingAmount'].toString() ?? '';
+            final description = document['description'].toString();
+            final servingAmount = document['servingAmount'].toString();
 
             return MealEntryWidget(
               description: description,
@@ -83,9 +89,9 @@ class MealEntryWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF2E343B),
+          color: AppColors.cardColor,
           borderRadius: BorderRadius.circular(70),
         ),
         child: Row(
@@ -98,17 +104,19 @@ class MealEntryWidget extends StatelessWidget {
                   width: 171,
                   height: 41,
                   decoration: ShapeDecoration(
-                    color: const Color(0xFF23292E),
+                    color: AppColors.backgroundColor,
                     shape: RoundedRectangleBorder(
                       side: const BorderSide(
-                          width: 0.50, color: Color(0xFF353B3F)),
+                        width: 0.50,
+                        color: AppColors.borderColor,
+                      ),
                       borderRadius: BorderRadius.circular(78),
                     ),
                   ),
                   child: Center(
                     child: Text(
                       description,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: AppColors.textColor),
                     ),
                   ),
                 ),
@@ -117,39 +125,41 @@ class MealEntryWidget extends StatelessWidget {
                   width: 171,
                   height: 41,
                   decoration: ShapeDecoration(
-                    color: const Color(0xFF23292E),
+                    color: AppColors.backgroundColor,
                     shape: RoundedRectangleBorder(
                       side: const BorderSide(
-                          width: 0.50, color: Color(0xFF353B3F)),
+                        width: 0.50,
+                        color: AppColors.borderColor,
+                      ),
                       borderRadius: BorderRadius.circular(78),
                     ),
                   ),
                   child: Center(
                     child: Text(
                       servingAmount,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: AppColors.textColor),
                     ),
                   ),
                 ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Container(
               width: 100,
               height: 100,
               decoration: const BoxDecoration(
-                color: Color(0xFF23292E),
+                color: AppColors.backgroundColor,
                 shape: BoxShape.circle,
               ),
-              child: Center(
-                child: const Icon(
+              child: const Center(
+                child: Icon(
                   Icons.edit,
-                  color: Colors.white,
+                  color: AppColors.textColor,
                   size: 35,
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             )
           ],
@@ -160,19 +170,25 @@ class MealEntryWidget extends StatelessWidget {
 }
 
 class TopBarWidget extends StatelessWidget {
+  const TopBarWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          width * 0.08, width * 0.1, width * 0.08, width * 0.04),
+        width * 0.08,
+        width * 0.1,
+        width * 0.08,
+        width * 0.04,
+      ),
       child: Row(
         children: [
           IconButton(
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Colors.white,
+              color: AppColors.textColor,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -188,7 +204,7 @@ class TopBarWidget extends StatelessWidget {
             ),
             child: const Icon(
               Icons.account_circle_outlined,
-              color: Colors.white,
+              color: AppColors.textColor,
               size: 35,
             ),
           ),
@@ -199,6 +215,8 @@ class TopBarWidget extends StatelessWidget {
 }
 
 class TitleWidget extends StatelessWidget {
+  const TitleWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -209,7 +227,7 @@ class TitleWidget extends StatelessWidget {
           'Meal History',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Color(0xFFFEFCFB),
+            color: AppColors.textColor,
             fontSize: 20,
             fontFamily: 'Lato',
             fontWeight: FontWeight.w900,

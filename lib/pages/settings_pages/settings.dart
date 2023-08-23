@@ -1,3 +1,4 @@
+import 'package:congressionalappchallenge/constants.dart';
 import 'package:congressionalappchallenge/pages/onboarding/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +21,16 @@ class Settings extends StatelessWidget {
     }
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(),
-      backgroundColor: const Color(0xFF22282C),
+      bottomNavigationBar: const BottomNavigationBarWidget(
+        currentTab: TabItem.Settings,
+      ),
+      backgroundColor: AppColors.backgroundColor,
       body: Center(
         child: Container(
           width: screenWidth * 0.9,
           height: screenHeight * 0.9,
           clipBehavior: Clip.antiAlias,
-          decoration: const BoxDecoration(color: Color(0xFF22282C)),
+          decoration: const BoxDecoration(color: AppColors.backgroundColor),
           child: Column(
             children: [
               SizedBox(height: screenHeight * 0.03),
@@ -60,7 +63,7 @@ class Settings extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MealDetail(),
+                      builder: (context) => const MealDetail(),
                     ),
                   );
                 },
@@ -99,18 +102,18 @@ class Settings extends StatelessWidget {
                   width: screenWidth * 0.85,
                   height: screenHeight * 0.05,
                   decoration: ShapeDecoration(
-                    color: const Color(0xFFFEFCFB),
+                    color: AppColors.textColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: SizedBox(
                       child: Text(
                         'Deactivate Account',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Color(0xFF555553),
+                          color: AppColors.hintTextColor,
                           fontSize: 15,
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.w600,
@@ -137,7 +140,7 @@ class Settings extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: Color(0xFFFEFCFB),
+          color: AppColors.textColor,
           fontSize: fontSize,
           fontFamily: 'Lato',
           fontWeight: fontWeight,
@@ -150,7 +153,7 @@ class Settings extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
       height: 1,
-      color: const Color(0xFF2E343B),
+      color: AppColors.cardColor,
     );
   }
 

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:congressionalappchallenge/components/bottom_nav_bar.dart';
+import 'package:congressionalappchallenge/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -138,35 +140,46 @@ class _MapPointScreenState extends State<MapPointScreen> {
                         ),
                         Center(
                           child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
                             width: mediaQuery.size.width * 0.8,
-                            color: const Color(0x0aafffff),
-                            child: TextField(
-                              controller: _searchController,
-                              decoration: InputDecoration(
-                                hintText: 'Search for an address',
-                                hintStyle: const TextStyle(
-                                  color: Color(0xFF169C89),
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () async {
-                                    String query = _searchController.text;
-                                    if (query.isNotEmpty) {
-                                      List<Location> locations =
-                                          await locationFromAddress(query);
-                                      if (locations.isNotEmpty) {
-                                        Location location = locations.first;
-                                        LatLng position = LatLng(
-                                          location.latitude,
-                                          location.longitude,
-                                        );
-                                        _mapController?.animateCamera(
-                                          CameraUpdate.newLatLng(position),
-                                        );
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(100),
+                                right: Radius.circular(100),
+                              ),
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Search for an address',
+                                  hintStyle: const TextStyle(
+                                    color: AppColors.hintTextColor,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () async {
+                                      String query = _searchController.text;
+                                      if (query.isNotEmpty) {
+                                        List<Location> locations =
+                                            await locationFromAddress(query);
+                                        if (locations.isNotEmpty) {
+                                          Location location = locations.first;
+                                          LatLng position = LatLng(
+                                            location.latitude,
+                                            location.longitude,
+                                          );
+                                          _mapController?.animateCamera(
+                                            CameraUpdate.newLatLng(position),
+                                          );
+                                        }
                                       }
-                                    }
-                                  },
-                                  iconSize: mediaQuery.size.width * 0.06,
-                                  icon: const Icon(Icons.search),
+                                    },
+                                    iconSize: mediaQuery.size.width * 0.06,
+                                    icon: const Icon(Icons.search),
+                                  ),
                                 ),
                               ),
                             ),
@@ -271,14 +284,17 @@ class _DetailsPopupState extends State<DetailsPopup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: const BottomNavigationBarWidget(
+        currentTab: TabItem.Map,
+      ),
       body: Stack(
         children: [
           Container(
             width: double.infinity,
-            color: const Color(0xFF2E343B),
+            color: AppColors.cardColor,
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -335,7 +351,7 @@ class _DetailsPopupState extends State<DetailsPopup> {
                         ],
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Align(
                       alignment: Alignment.centerRight,
                       child: Column(
@@ -419,8 +435,8 @@ class _DetailsPopupState extends State<DetailsPopup> {
         ],
       ),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2E343B),
-        shadowColor: const Color(0xFF2E343B),
+        backgroundColor: AppColors.cardColor,
+        shadowColor: AppColors.cardColor,
         elevation: 100,
         title: FutureBuilder(
           future: getAddressFromLatLng(

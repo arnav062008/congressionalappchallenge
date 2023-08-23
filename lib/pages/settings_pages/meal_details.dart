@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:congressionalappchallenge/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -73,14 +74,16 @@ class MealDetail extends StatelessWidget {
         );
 
     return Scaffold(
-      bottomNavigationBar: const BottomNavigationBarWidget(),
-      backgroundColor: const Color(0xFF22282C),
+      bottomNavigationBar: const BottomNavigationBarWidget(
+        currentTab: TabItem.Settings,
+      ),
+      backgroundColor: AppColors.backgroundColor,
       body: Center(
         child: Container(
           width: screenWidth * 0.9,
           height: screenHeight * 0.9,
           clipBehavior: Clip.antiAlias,
-          decoration: const BoxDecoration(color: Color(0xFF22282C)),
+          decoration: const BoxDecoration(color: AppColors.backgroundColor),
           child: Column(
             children: [
               SizedBox(height: dividerHeight),
@@ -140,7 +143,7 @@ class MealDetail extends StatelessWidget {
                     height: screenHeight * 0.07,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(screenWidth * 0.02),
-                      color: const Color(0xff169c89),
+                      color: AppColors.accentColor,
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 0.04),
                     child: Row(
@@ -210,8 +213,8 @@ class PhoneNumberTextBox extends StatelessWidget {
       height: height * 0.07,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(width * 0.02),
-        border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
-        color: const Color(0xfff7f7f7),
+        border: Border.all(color: Colors.white, width: width * 0.01),
+        color: Colors.white,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 0.04),
       child: Container(
@@ -225,7 +228,7 @@ class PhoneNumberTextBox extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
               child: Icon(
                 Icons.phone,
-                color: const Color(0xffc6c6c6),
+                color: AppColors.hintTextColor.withOpacity(0.8),
                 size: width * 0.06,
               ),
             ),
@@ -233,7 +236,7 @@ class PhoneNumberTextBox extends StatelessWidget {
             Expanded(
               child: TextField(
                 style: TextStyle(
-                  color: const Color(0xffc6c6c6),
+                  color: AppColors.hintTextColor,
                   fontSize: width * 0.04,
                 ),
                 controller: controller,
@@ -246,8 +249,7 @@ class PhoneNumberTextBox extends StatelessWidget {
                   focusedErrorBorder: InputBorder.none,
                   hintText: 'Phone Number: ',
                   hintStyle: TextStyle(
-                    color: const Color(0xffc6c6c6)
-                        .withOpacity(0.7), // Slightly darker hint text
+                    color: AppColors.hintTextColor,
                     fontSize: width * 0.04,
                   ),
                 ),
@@ -284,8 +286,8 @@ class TextBoxs extends StatelessWidget {
       height: height * 0.07,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(width * 0.02),
-        border: Border.all(color: const Color(0xffdddddd), width: width * 0.01),
-        color: const Color(0xfff7f7f7),
+        border: Border.all(color: Colors.white, width: width * 0.01),
+        color: Colors.white,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 0.04),
       child: Container(
@@ -299,7 +301,7 @@ class TextBoxs extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
               child: Icon(
                 icon,
-                color: const Color(0xffc6c6c6),
+                color: AppColors.hintTextColor.withOpacity(0.8),
                 size: width * 0.06,
               ),
             ),
@@ -308,7 +310,7 @@ class TextBoxs extends StatelessWidget {
               child: TextField(
                 obscureText: obsc,
                 style: TextStyle(
-                  color: const Color(0xffc6c6c6),
+                  color: AppColors.hintTextColor,
                   fontSize: width * 0.04,
                 ),
                 controller: _nameController,
@@ -321,7 +323,7 @@ class TextBoxs extends StatelessWidget {
                   hintText: text,
                   border: InputBorder.none,
                   hintStyle: TextStyle(
-                    color: const Color(0xffc6c6c6).withOpacity(0.5),
+                    color: AppColors.hintTextColor,
                     fontSize: width * 0.04,
                   ),
                 ),

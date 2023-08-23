@@ -162,6 +162,7 @@ class CustomSwitch extends StatelessWidget {
   final VoidCallback onToggleMonth;
 
   const CustomSwitch({
+    super.key,
     required this.isWeeklySelected,
     required this.isMonthlySelected,
     required this.onToggleWeek,

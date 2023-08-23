@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:congressionalappchallenge/components/bottom_nav_bar.dart';
 import 'package:congressionalappchallenge/constants.dart';
@@ -140,7 +142,7 @@ class _MapPointScreenState extends State<MapPointScreen> {
                         ),
                         Center(
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             width: mediaQuery.size.width * 0.8,
                             decoration: const BoxDecoration(
                               color: Colors.white,

@@ -76,7 +76,7 @@ class _MealAddState extends State<MealAdd> {
     }
   }
 
-  void _saveMealToFirebase() async {
+  void _saveMealToFirebase(context) async {
     final hasPhoneField = await checkIfPhoneFieldExists();
 
     if (hasPhoneField) {
@@ -285,7 +285,7 @@ class _MealAddState extends State<MealAdd> {
                                       color: Colors.white,
                                     ),
                                     onTap: () {
-                                      _saveMealToFirebase();
+                                      _saveMealToFirebase(context);
                                     },
                                   ),
                                 )
@@ -327,13 +327,13 @@ class TopBarWidget extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MealHistory(),
+                    builder: (context) => const MealHistory(),
                   ),
                 );
               },
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Align(
             alignment: Alignment.topRight,
             child: Container(

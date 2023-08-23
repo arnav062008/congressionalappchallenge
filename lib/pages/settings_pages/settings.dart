@@ -14,10 +14,9 @@ class Settings extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
-    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-    final iconSize = screenWidth / 10;
-    _signOut() async {
-      await _firebaseAuth.signOut();
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    signOut() async {
+      await firebaseAuth.signOut();
     }
 
     return Scaffold(
@@ -86,7 +85,7 @@ class Settings extends StatelessWidget {
                   fontSize: 18,
                 ),
                 onTap: () {
-                  _signOut().then(
+                  signOut().then(
                     (value) => Navigator.push(
                       context,
                       MaterialPageRoute(

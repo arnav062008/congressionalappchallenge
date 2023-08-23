@@ -15,14 +15,14 @@ class MealDetail extends StatelessWidget {
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
     final double dividerHeight = screenHeight * 0.043333;
-    final TextEditingController _phoneNumController = TextEditingController();
-    final TextEditingController _allergenController = TextEditingController();
-    void _saveDetails() async {
+    final TextEditingController phoneNumController = TextEditingController();
+    final TextEditingController allergenController = TextEditingController();
+    void saveDetails() async {
       final user = FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser?.uid);
-      final String phoneNum = _phoneNumController.text;
-      final String allergens = _allergenController.text;
+      final String phoneNum = phoneNumController.text;
+      final String allergens = allergenController.text;
 
       user.set({
         "phone": phoneNum,
@@ -122,7 +122,7 @@ class MealDetail extends StatelessWidget {
               PhoneNumberTextBox(
                 width: screenWidth,
                 height: screenHeight,
-                controller: _phoneNumController,
+                controller: phoneNumController,
               ),
               SizedBox(height: dividerHeight),
               sectionDivider(),
@@ -132,7 +132,7 @@ class MealDetail extends StatelessWidget {
                 obsc: false,
                 width: screenWidth,
                 height: screenHeight,
-                nameController: _allergenController,
+                nameController: allergenController,
                 icon: Icons.fastfood,
                 text: "Allergens Food is Cooked Near:",
               ),
@@ -162,7 +162,7 @@ class MealDetail extends StatelessWidget {
                     ),
                   ),
                   onTap: () async {
-                    if (_phoneNumController.text.length != 10) {
+                    if (phoneNumController.text.length != 10) {
                       showDialog(
                           context: context,
                           builder: (context) {
@@ -172,8 +172,8 @@ class MealDetail extends StatelessWidget {
                             );
                           });
                     } else {
-                      if (_allergenController.text.isNotEmpty) {
-                        _saveDetails();
+                      if (allergenController.text.isNotEmpty) {
+                        saveDetails();
                       } else {
                         showDialog(
                           context: context,
@@ -197,7 +197,8 @@ class MealDetail extends StatelessWidget {
 }
 
 class PhoneNumberTextBox extends StatelessWidget {
-  PhoneNumberTextBox({
+  const PhoneNumberTextBox({
+    super.key,
     required this.width,
     required this.height,
     required this.controller,

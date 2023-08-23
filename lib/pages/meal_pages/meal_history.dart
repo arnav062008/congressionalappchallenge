@@ -22,8 +22,8 @@ class _MealHistoryState extends State<MealHistory> {
       backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [
-          TopBarWidget(),
-          TitleWidget(),
+          const TopBarWidget(),
+          const TitleWidget(),
           Expanded(
             child: MealDisplay(
               currentUserUid: FirebaseAuth.instance.currentUser!.uid,

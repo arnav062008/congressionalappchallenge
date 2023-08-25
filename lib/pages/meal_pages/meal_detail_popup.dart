@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -19,12 +18,13 @@ class _DetailsPopupState extends State<DetailsPopup> {
   bool _isContainerVisible = false;
   String allergen = "N/A";
   String phoneNum = "N/A";
+  String email = "N/A";
 
-  void getAllergensForUser() async {
-    String uid = FirebaseAuth.instance.currentUser!.uid;
+  void getAllergensForUser(MapPoint mapPoint) async {
     CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('users');
-    DocumentSnapshot userDocument = await usersCollection.doc(uid).get();
+    DocumentSnapshot userDocument =
+        await usersCollection.doc(mapPoint.uid).get();
 
     if (userDocument.exists) {
       Map<String, dynamic> userData =
@@ -32,6 +32,7 @@ class _DetailsPopupState extends State<DetailsPopup> {
       setState(() {
         allergen = userData["allergens"];
         phoneNum = userData["phone"];
+        email = userData["email"];
       });
     }
   }
@@ -65,7 +66,7 @@ class _DetailsPopupState extends State<DetailsPopup> {
   @override
   void initState() {
     super.initState();
-    getAllergensForUser();
+    getAllergensForUser(widget.mapPoint);
   }
 
   void _decrement() {
@@ -112,15 +113,20 @@ class _DetailsPopupState extends State<DetailsPopup> {
         final DocumentReference mealRef = FirebaseFirestore.instance
             .collection('meals')
             .doc(widget.mapPoint.documentID);
-
         await FirebaseFirestore.instance.runTransaction((transaction) async {
           DocumentSnapshot snapshot = await transaction.get(mealRef);
-
+          int? currentAided =
+              (snapshot.data() as Map<String, dynamic>)['aided'];
           if (snapshot.exists) {
             int currentServingAmount = snapshot['servingAmount'] ?? 0;
             if (currentServingAmount > 0) {
               transaction.update(
-                  mealRef, {'servingAmount': currentServingAmount - amount});
+                mealRef,
+                {
+                  'servingAmount': currentServingAmount - amount,
+                  'aided': currentAided! + currentServingAmount
+                },
+              );
             } else {
               print("Serving amount is already at 0.");
             }
@@ -134,20 +140,15 @@ class _DetailsPopupState extends State<DetailsPopup> {
     }
 
     Text servingText = Text(
-      "Serves: ${widget.mapPoint.servingAmount}",
+      _number > 1
+          ? "Serves: ${widget.mapPoint.servingAmount} (-$_number)"
+          : "Serves: ${widget.mapPoint.servingAmount}",
       style: const TextStyle(color: Colors.white),
     );
 
-    if (_number > 1) {
-      servingText = Text(
-        "Serves: ${widget.mapPoint.servingAmount} (x$_number)",
-        style: const TextStyle(color: Colors.white),
-      );
-    }
-
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      bottomNavigationBar: const BottomNavigationBarWidget(
+      bottomNavigationBar: BottomNavigationBarWidget(
         currentTab: TabItem.Map,
       ),
       body: Stack(
@@ -241,7 +242,7 @@ class _DetailsPopupState extends State<DetailsPopup> {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Email: ${FirebaseAuth.instance.currentUser?.email}",
+                                "Email: $email",
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ),

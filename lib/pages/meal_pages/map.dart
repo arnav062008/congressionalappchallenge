@@ -205,7 +205,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ],
                 ),
-                const Align(
+                Align(
                   alignment: Alignment.bottomCenter,
                   child: BottomNavigationBarWidget(
                     currentTab: TabItem.AddMeal,

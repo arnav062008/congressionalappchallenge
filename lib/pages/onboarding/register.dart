@@ -24,10 +24,9 @@ class _RegisterState extends State<Register> {
         email: email,
         password: password,
       );
-
-      String userId = userCredential.user?.uid ?? "";
-
-      await users.doc(userId).set({
+      String userId = userCredential.user!.uid;
+      print(userId);
+      users.doc(userId).set({
         'name': name,
         'email': email,
       });

@@ -5,26 +5,35 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/bottom_nav_bar.dart';
+import 'settings.dart' as settings;
 
 class MealDetail extends StatelessWidget {
   const MealDetail({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    final screenHeight = mediaQuery.size.height;
-    final double dividerHeight = screenHeight * 0.043333;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final double dividerHeight = height * 0.043333;
     final TextEditingController phoneNumController = TextEditingController();
     final TextEditingController allergenController = TextEditingController();
     void saveDetails() async {
       final user = FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser?.uid);
+      final DocumentReference documentReference = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser?.uid);
+
+      DocumentSnapshot documentSnapshot = await documentReference.get();
+      Map<String, dynamic> currentData =
+          documentSnapshot.data() as Map<String, dynamic>;
       final String phoneNum = phoneNumController.text;
       final String allergens = allergenController.text;
 
-      user.set({
+      user.update({
+        "name": currentData['name'],
+        "email": currentData['email'],
         "phone": phoneNum,
         "allergens": allergens,
       }).then((_) {
@@ -53,144 +62,204 @@ class MealDetail extends StatelessWidget {
     }
 
     Widget sectionDivider() => Container(
-          width: screenWidth * 0.9,
+          width: width * 0.6,
           height: 1,
           color: const Color(0xFF2E343B),
         );
 
-    Widget sectionTitle(String title) => SizedBox(
-          width: screenWidth * 0.7,
-          height: screenHeight * 0.035,
-          child: Text(
-            title,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              color: Color(0xFFFEFCFB),
-              fontSize: 15,
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.w600,
+    Widget sectionTitle(String title) => Padding(
+          padding: EdgeInsets.fromLTRB(width * 0.1, 0, 0, 0),
+          child: SizedBox(
+            width: width * 0.7,
+            height: height * 0.035,
+            child: Text(
+              title,
+              textAlign: TextAlign.left,
+              style: const TextStyle(
+                color: Color(0xFFFEFCFB),
+                fontSize: 15,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         );
 
     return Scaffold(
-      bottomNavigationBar: const BottomNavigationBarWidget(
+      bottomNavigationBar: BottomNavigationBarWidget(
         currentTab: TabItem.Settings,
       ),
       backgroundColor: AppColors.backgroundColor,
-      body: Center(
-        child: Container(
-          width: screenWidth * 0.9,
-          height: screenHeight * 0.9,
-          clipBehavior: Clip.antiAlias,
-          decoration: const BoxDecoration(color: AppColors.backgroundColor),
-          child: Column(
-            children: [
-              SizedBox(height: dividerHeight),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    size: 35,
-                    color: Colors.white,
-                  ),
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: height * 0.37,
+            decoration: const ShapeDecoration(
+              color: AppColors.accentColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
                 ),
               ),
-              SizedBox(height: dividerHeight),
-              SizedBox(
-                width: screenWidth * 0.72,
-                height: screenHeight * 0.072,
-                child: const Text(
-                  'Details',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFFFEFCFB),
-                    fontSize: 20,
-                    fontFamily: 'Lato',
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              SizedBox(height: dividerHeight),
-              sectionDivider(),
-              SizedBox(height: dividerHeight),
-              sectionTitle('Phone Number'),
-              PhoneNumberTextBox(
-                width: screenWidth,
-                height: screenHeight,
-                controller: phoneNumController,
-              ),
-              SizedBox(height: dividerHeight),
-              sectionDivider(),
-              SizedBox(height: dividerHeight),
-              sectionTitle('Allergens: '),
-              TextBoxs(
-                obsc: false,
-                width: screenWidth,
-                height: screenHeight,
-                nameController: allergenController,
-                icon: Icons.fastfood,
-                text: "Allergens Food is Cooked Near:",
-              ),
-              const Spacer(),
-              GestureDetector(
-                  child: Container(
-                    width: screenWidth * 0.9,
-                    height: screenHeight * 0.07,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(screenWidth * 0.02),
-                      color: AppColors.accentColor,
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 0.04),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Confirm",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: screenWidth * 0.05,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  onTap: () async {
-                    if (phoneNumController.text.length != 10) {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const BasicAlert(
-                              text: 'Phone Number is not 10 Char',
-                              title: 'Error with Detail Save',
-                            );
-                          });
-                    } else {
-                      if (allergenController.text.isNotEmpty) {
-                        saveDetails();
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const BasicAlert(
-                              text: 'Allergens are Empty',
-                              title: 'Error with Detail Save',
-                            );
-                          },
-                        );
-                      }
-                    }
-                  }),
-              SizedBox(height: screenHeight * 0.03),
-            ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 70, 30, 0),
+            child: Row(
+              children: [
+                GestureDetector(
+                  child: const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Icon(
+                      Icons.settings,
+                      size: 40,
+                      color: AppColors.textColor,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const settings.Settings()),
+                    );
+                  },
+                ),
+                SizedBox(
+                  width: width * 0.02,
+                ),
+                const Text(
+                  'Settings',
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 28,
+                    fontFamily: 'Rubik',
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.98,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: width * 0.86861313868,
+              height: height * 0.76670716889,
+              decoration: const ShapeDecoration(
+                color: AppColors.backgroundColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x51131313),
+                    blurRadius: 16,
+                    offset: Offset(0, 2),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: Center(
+                child: Container(
+                  width: width * 0.9,
+                  height: height * 0.9,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: const BoxDecoration(
+                    color: AppColors.backgroundColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: dividerHeight),
+                      sectionDivider(),
+                      SizedBox(height: dividerHeight),
+                      sectionTitle('Phone Number'),
+                      PhoneNumberTextBox(
+                        width: width,
+                        height: height,
+                        controller: phoneNumController,
+                      ),
+                      SizedBox(height: dividerHeight),
+                      sectionDivider(),
+                      SizedBox(height: dividerHeight),
+                      sectionTitle('Allergens: '),
+                      TextBoxs(
+                        obsc: false,
+                        width: width,
+                        height: height,
+                        nameController: allergenController,
+                        icon: Icons.fastfood,
+                        text: "Allergens:",
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                          child: Container(
+                            width: width * 0.7,
+                            height: height * 0.05,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(width * 0.02),
+                              color: AppColors.accentColor,
+                            ),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 0.04),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Confirm",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: width * 0.05,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () async {
+                            if (phoneNumController.text.length != 10) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const BasicAlert(
+                                      text: 'Phone Number is not 10 Char',
+                                      title: 'Error with Detail Save',
+                                    );
+                                  });
+                            } else {
+                              if (allergenController.text.isNotEmpty) {
+                                saveDetails();
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const BasicAlert(
+                                      text: 'Allergens are Empty',
+                                      title: 'Error with Detail Save',
+                                    );
+                                  },
+                                );
+                              }
+                            }
+                          }),
+                      SizedBox(height: height * 0.03),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -210,7 +279,7 @@ class PhoneNumberTextBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width * 0.9,
+      width: width * 0.6,
       height: height * 0.07,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(width * 0.02),
@@ -283,7 +352,7 @@ class TextBoxs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width * 0.9,
+      width: width * 0.6,
       height: height * 0.07,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(width * 0.02),

@@ -91,6 +91,7 @@ class _MealAddState extends State<MealAdd> {
         'longitude': widget.longitude ?? 0.0,
         'servingAmount': int.parse(_servingAmount.text),
         'uid': FirebaseAuth.instance.currentUser?.uid,
+        'aided': 0,
       }).then((_) {
         showDialog(
           context: context,
@@ -141,7 +142,7 @@ class _MealAddState extends State<MealAdd> {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      bottomNavigationBar: const BottomNavigationBarWidget(
+      bottomNavigationBar: BottomNavigationBarWidget(
         currentTab: TabItem.AddMeal,
       ),
       backgroundColor: AppColors.backgroundColor,

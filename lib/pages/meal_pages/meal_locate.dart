@@ -181,7 +181,7 @@ class _MapPointScreenState extends State<MapPointScreen> {
                     ),
                   ],
                 ),
-                const Align(
+                Align(
                     alignment: Alignment.bottomCenter,
                     child: BottomNavigationBarWidget(currentTab: TabItem.Map)),
               ],

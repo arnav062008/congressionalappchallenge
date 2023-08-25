@@ -1,3 +1,4 @@
+import 'package:congressionalappchallenge/components/bottom_nav_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -9,7 +10,11 @@ import '../../constants.dart';
 import 'add_meal.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({Key? key}) : super(key: key);
+  final String? desc;
+  final DateTime? date;
+  final int? servingAmt;
+  const MapScreen({Key? key, this.desc, this.date, this.servingAmt})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -86,6 +91,9 @@ class _MapScreenState extends State<MapScreen> {
           builder: (context) => MealAdd(
             latitude: _selectedLatitude,
             longitude: _selectedLongitude,
+            descr: widget.desc,
+            dates: widget.date,
+            serve: widget.servingAmt,
           ),
         ),
       );
@@ -115,68 +123,94 @@ class _MapScreenState extends State<MapScreen> {
                 Column(
                   children: [
                     const SizedBox(height: 50),
-                    Center(
-                      child: Container(
-                        width: mediaQuery.size.width * 0.8,
-                        color: AppColors.primaryColor.withOpacity(0.04),
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Search for an address',
-                            suffixIcon: IconButton(
-                              onPressed: () async {
-                                String query = _searchController.text;
-                                if (query.isNotEmpty) {
-                                  List<Location> locations =
-                                      await locationFromAddress(query);
-                                  if (locations.isNotEmpty) {
-                                    Location location = locations.first;
-                                    LatLng position = LatLng(
-                                      location.latitude,
-                                      location.longitude,
-                                    );
-                                    _mapController?.animateCamera(
-                                      CameraUpdate.newLatLng(position),
-                                    );
-                                    setState(() {
-                                      _markers.clear();
-                                      _markers.add(
-                                        Marker(
-                                          markerId:
-                                              const MarkerId('search_result'),
-                                          position: position,
-                                        ),
-                                      );
-                                      _selectedLatitude = position.latitude;
-                                      _selectedLongitude = position.longitude;
-                                    });
-                                  }
-                                }
-                              },
-                              iconSize: mediaQuery.size.width * 0.06,
-                              icon: const Icon(Icons.search),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            color: AppColors.hintTextColor,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          width: _markerPlaced
+                              ? MediaQuery.of(context).size.width * 0.65
+                              : MediaQuery.of(context).size.width * 0.7,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.horizontal(
+                              left: Radius.circular(100),
+                              right: Radius.circular(100),
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: TextField(
+                              controller: _searchController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Search for an address',
+                                hintStyle: const TextStyle(
+                                  color: AppColors.hintTextColor,
+                                ),
+                                suffixIcon: IconButton(
+                                  onPressed: () async {
+                                    String query = _searchController.text;
+                                    if (query.isNotEmpty) {
+                                      List<Location> locations =
+                                          await locationFromAddress(query);
+                                      if (locations.isNotEmpty) {
+                                        Location location = locations.first;
+                                        LatLng position = LatLng(
+                                          location.latitude,
+                                          location.longitude,
+                                        );
+                                        _mapController?.animateCamera(
+                                          CameraUpdate.newLatLng(position),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  iconSize: mediaQuery.size.width * 0.06,
+                                  icon: const Icon(Icons.search),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        const Spacer(),
+                        _markerPlaced
+                            ? Align(
+                                alignment: Alignment.bottomLeft,
+                                child: IconButton(
+                                  color: AppColors.hintTextColor,
+                                  onPressed: _onDoneButtonPressed,
+                                  icon: const Icon(
+                                    Icons.done,
+                                    size: 25,
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                _markerPlaced
-                    ? Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            onPressed: _onDoneButtonPressed,
-                            icon: const Icon(
-                              Icons.done,
-                              size: 25,
-                            ),
-                          ),
-                        ),
-                      )
-                    : Container(),
+                const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: BottomNavigationBarWidget(
+                    currentTab: TabItem.AddMeal,
+                  ),
+                )
               ],
             ),
     );

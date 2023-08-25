@@ -29,7 +29,7 @@ class MealAdd extends StatefulWidget {
   final DateTime? date;
   final String? descr;
   final DateTime? dates;
-  final String? serve;
+  final int? serve;
   @override
   State<MealAdd> createState() => _MealAddState();
 }
@@ -39,15 +39,18 @@ class _MealAddState extends State<MealAdd> {
       TextEditingController(text: widget.descr);
   late DateTime? selectedDate = widget.date ?? DateTime.now();
   late int servingAmounts = 1;
-  late final TextEditingController _servingAmount =
-      TextEditingController(text: widget.serve);
+  late final TextEditingController _servingAmount = TextEditingController(
+    text: widget.serve.toString().isNotEmpty ? widget.serve.toString() : "",
+  );
   CollectionReference meals = FirebaseFirestore.instance.collection('meals');
 
   @override
   void initState() {
     super.initState();
 
-    selectedDate = DateTime.now();
+    selectedDate = widget.dates ?? DateTime.now();
+    _servingAmount.text = widget.serve != null ? widget.serve.toString() : "";
+
     _servingAmount.addListener(() {
       final text = _servingAmount.text;
       if (text.isNotEmpty && !RegExp(r'^\d+$').hasMatch(text)) {
@@ -142,160 +145,246 @@ class _MealAddState extends State<MealAdd> {
         currentTab: TabItem.AddMeal,
       ),
       backgroundColor: AppColors.backgroundColor,
-      body: Column(
+      body: Stack(
         children: [
-          const TopBarWidget(),
-          const SizedBox(height: 8),
-          const TitleWidget(),
-          const SizedBox(height: 8),
           Container(
-            width: width * 0.8,
-            height: height * 0.6,
-            decoration: ShapeDecoration(
-              color: AppColors.cardColor,
+            width: double.infinity,
+            height: height * 0.37,
+            decoration: const ShapeDecoration(
+              color: AppColors.accentColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(70),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
               ),
             ),
-            child: Column(
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 70, 30, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: height * 0.05),
-                TextBox(
-                  number: false,
-                  texts: 'Description',
-                  width: width * 0.64,
-                  height: height * 0.09,
-                  controller: descriptionController,
+                const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Icon(
+                    Icons.add_box,
+                    size: 40,
+                    color: AppColors.textColor,
+                  ),
                 ),
-                const SizedBox(height: 20),
-                Transform.scale(
-                  scale: 0.75,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Set time',
-                        style: TextStyle(
-                          color: AppColors.textColor,
-                          fontSize: 20,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: height * 0.093,
-                        child: CupertinoTheme(
-                          data: const CupertinoThemeData(
-                            textTheme: CupertinoTextThemeData(
-                              dateTimePickerTextStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          child: CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.dateAndTime,
-                            initialDateTime: selectedDate,
-                            onDateTimeChanged: onDateChanged,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                'Save',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppColors.textColor,
-                                  fontSize: 16,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: width * 0.4,
-                                height: height * 0.06,
-                                decoration: ShapeDecoration(
-                                  color: AppColors.textColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: TextBox(
-                                    number: true,
-                                    texts: "Serving Amount",
-                                    width: width * 0.64,
-                                    height: height * 0.09,
-                                    controller: _servingAmount,
-                                  ),
-                                ),
-                              ),
-                              const Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const MapScreen(),
-                                    ),
-                                  );
-                                },
-                                child: const Icon(
-                                  Icons.add_location_alt,
-                                  size: 45,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          widget.latitude != null
-                              ? Align(
-                                  alignment: Alignment.centerRight,
-                                  child: GestureDetector(
-                                    child: const Icon(
-                                      Icons.add_circle,
-                                      size: 45,
-                                      color: Colors.white,
-                                    ),
-                                    onTap: () {
-                                      _saveMealToFirebase(context);
-                                    },
-                                  ),
-                                )
-                              : const SizedBox()
-                        ],
-                      )
-                    ],
+                SizedBox(
+                  width: width * 0.02,
+                ),
+                const Text(
+                  'Add Meals',
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 28,
+                    fontFamily: 'Rubik',
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.98,
+                  ),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MealHistory()),
+                    );
+                  },
+                  child: const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Icon(
+                      Icons.history,
+                      size: 40,
+                      color: AppColors.textColor,
+                    ),
                   ),
                 ),
               ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: width * 0.86861313868,
+              height: height * 0.76670716889,
+              decoration: const ShapeDecoration(
+                color: AppColors.backgroundColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x51131313),
+                    blurRadius: 16,
+                    offset: Offset(0, 2),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: height * 0.05,
+                  ),
+                  const TitleWidget(),
+                  SizedBox(height: height * 0.05),
+                  TextBox(
+                    number: false,
+                    texts: 'Description',
+                    width: width * 0.64,
+                    height: height * 0.09,
+                    controller: descriptionController,
+                  ),
+                  const SizedBox(height: 20),
+                  Transform.scale(
+                    scale: 0.75,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Set time',
+                          style: TextStyle(
+                            color: AppColors.textColor,
+                            fontSize: 20,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: height * 0.093,
+                          child: CupertinoTheme(
+                            data: const CupertinoThemeData(
+                              textTheme: CupertinoTextThemeData(
+                                dateTimePickerTextStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            child: CupertinoDatePicker(
+                              mode: CupertinoDatePickerMode.dateAndTime,
+                              initialDateTime: selectedDate,
+                              onDateTimeChanged: onDateChanged,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  'Save',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: AppColors.textColor,
+                                    fontSize: 16,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: width * 0.4,
+                                  height: height * 0.06,
+                                  decoration: ShapeDecoration(
+                                    color: AppColors.textColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: TextBox(
+                                      number: true,
+                                      texts: "Serving Amount",
+                                      width: width * 0.64,
+                                      height: height * 0.09,
+                                      controller: _servingAmount,
+                                    ),
+                                  ),
+                                ),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MapScreen(
+                                          servingAmt: _servingAmount
+                                                  .text.isNotEmpty
+                                              ? int.parse(_servingAmount.text)
+                                              : 0,
+                                          desc: descriptionController
+                                                  .text.isNotEmpty
+                                              ? descriptionController.text
+                                              : null,
+                                          date: selectedDate ?? DateTime.now(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Icon(
+                                    Icons.add_location_alt,
+                                    size: 45,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            widget.latitude != null
+                                ? Align(
+                                    alignment: Alignment.centerRight,
+                                    child: GestureDetector(
+                                      child: const Icon(
+                                        Icons.add_circle,
+                                        size: 45,
+                                        color: Colors.white,
+                                      ),
+                                      onTap: () {
+                                        _saveMealToFirebase(context);
+                                      },
+                                    ),
+                                  )
+                                : const SizedBox()
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

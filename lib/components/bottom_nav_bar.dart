@@ -1,3 +1,4 @@
+import 'package:congressionalappchallenge/pages/meal_pages/meal_history.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -11,6 +12,7 @@ enum TabItem {
   Map,
   AddMeal,
   Settings,
+  History,
 }
 
 class BottomNavigationBarWidget extends StatelessWidget {
@@ -78,7 +80,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildTab(
-            icon: Icons.house_outlined,
+            icon: Icons.house,
             isActive: currentTab == TabItem.Summary,
             onPressed: () {
               if (currentTab != TabItem.Summary) {
@@ -91,7 +93,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             context: context,
           ),
           _buildTab(
-            icon: Icons.map_outlined,
+            icon: Icons.map,
             isActive: currentTab == TabItem.Map,
             onPressed: () {
               if (currentTab != TabItem.Map) {
@@ -105,7 +107,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             context: context,
           ),
           _buildTab(
-            icon: Icons.add_circle_outline,
+            icon: Icons.add_box,
             isActive: currentTab == TabItem.AddMeal,
             onPressed: () {
               if (currentTab != TabItem.AddMeal) {
@@ -118,7 +120,20 @@ class BottomNavigationBarWidget extends StatelessWidget {
             context: context,
           ),
           _buildTab(
-            icon: Icons.settings_outlined,
+            icon: Icons.history,
+            isActive: currentTab == TabItem.History,
+            onPressed: () {
+              if (currentTab != TabItem.History) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MealHistory()),
+                );
+              }
+            },
+            context: context,
+          ),
+          _buildTab(
+            icon: Icons.settings,
             isActive: currentTab == TabItem.Settings,
             onPressed: () {
               if (currentTab != TabItem.Settings) {

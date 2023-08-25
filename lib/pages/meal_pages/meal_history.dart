@@ -17,7 +17,7 @@ class _MealHistoryState extends State<MealHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomNavigationBarWidget(
-        currentTab: TabItem.AddMeal,
+        currentTab: TabItem.History,
       ),
       backgroundColor: AppColors.backgroundColor,
       body: Column(

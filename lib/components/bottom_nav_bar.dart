@@ -1,6 +1,6 @@
-import 'package:congressionalappchallenge/constants.dart';
 import 'package:flutter/material.dart';
 
+import '../constants.dart';
 import '../pages/meal_pages/add_meal.dart';
 import '../pages/meal_pages/meal_locate.dart';
 import '../pages/settings_pages/settings.dart';
@@ -24,8 +24,30 @@ class BottomNavigationBarWidget extends StatelessWidget {
   static const Color backgroundColor = Color(0xFF2e343b);
   static const Color shadowColor = Color(0xB22e343b);
   static const Color iconColor = Color(0xFFCDCDCD);
+  static const double iconSize = 0.077;
 
-  Widget buildTabIndicator(bool isActive) {
+  Widget _buildTab(
+      {required IconData icon,
+      required bool isActive,
+      required VoidCallback onPressed,
+      required BuildContext context}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          onPressed: onPressed,
+          icon: Icon(
+            icon,
+            size: MediaQuery.of(context).size.width * iconSize,
+            color: isActive ? Colors.white : iconColor,
+          ),
+        ),
+        _buildTabIndicator(isActive),
+      ],
+    );
+  }
+
+  Widget _buildTabIndicator(bool isActive) {
     return Container(
       width: 6,
       height: 6,
@@ -38,9 +60,6 @@ class BottomNavigationBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final iconSize = width * 0.077;
-
     return Container(
       width: double.infinity,
       height: 64,
@@ -58,85 +77,58 @@ class BottomNavigationBarWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Summary()),
-                  );
-                },
-                icon: Icon(
-                  Icons.house_outlined,
-                  size: iconSize,
-                  color:
-                      currentTab == TabItem.Summary ? Colors.white : iconColor,
-                ),
-              ),
-              buildTabIndicator(currentTab == TabItem.Summary),
-            ],
+          _buildTab(
+            icon: Icons.house_outlined,
+            isActive: currentTab == TabItem.Summary,
+            onPressed: () {
+              if (currentTab != TabItem.Summary) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Summary()),
+                );
+              }
+            },
+            context: context,
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MapPointScreen()),
-                  );
-                },
-                icon: Icon(
-                  Icons.map_outlined,
-                  size: iconSize,
-                  color: currentTab == TabItem.Map ? Colors.white : iconColor,
-                ),
-              ),
-              buildTabIndicator(currentTab == TabItem.Map),
-            ],
+          _buildTab(
+            icon: Icons.map_outlined,
+            isActive: currentTab == TabItem.Map,
+            onPressed: () {
+              if (currentTab != TabItem.Map) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MapPointScreen()),
+                );
+              }
+            },
+            context: context,
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MealAdd()),
-                  );
-                },
-                icon: Icon(
-                  Icons.add_circle_outline,
-                  size: iconSize,
-                  color:
-                      currentTab == TabItem.AddMeal ? Colors.white : iconColor,
-                ),
-              ),
-              buildTabIndicator(currentTab == TabItem.AddMeal),
-            ],
+          _buildTab(
+            icon: Icons.add_circle_outline,
+            isActive: currentTab == TabItem.AddMeal,
+            onPressed: () {
+              if (currentTab != TabItem.AddMeal) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MealAdd()),
+                );
+              }
+            },
+            context: context,
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Settings()),
-                  );
-                },
-                icon: Icon(
-                  Icons.settings_outlined,
-                  size: iconSize,
-                  color:
-                      currentTab == TabItem.Settings ? Colors.white : iconColor,
-                ),
-              ),
-              buildTabIndicator(currentTab == TabItem.Settings),
-            ],
+          _buildTab(
+            icon: Icons.settings_outlined,
+            isActive: currentTab == TabItem.Settings,
+            onPressed: () {
+              if (currentTab != TabItem.Settings) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Settings()),
+                );
+              }
+            },
+            context: context,
           ),
         ],
       ),

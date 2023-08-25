@@ -55,7 +55,12 @@ class MealDisplay extends StatelessWidget {
           return Center(child: Text('Error: ${snapshot.error}'));
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No meals found.'));
+          return const Center(
+            child: Text(
+              'No meals found.',
+              style: TextStyle(color: AppColors.textColor),
+            ),
+          );
         }
 
         return ListView(

@@ -15,18 +15,82 @@ class MealHistory extends StatefulWidget {
 class _MealHistoryState extends State<MealHistory> {
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       bottomNavigationBar: const BottomNavigationBarWidget(
         currentTab: TabItem.History,
       ),
       backgroundColor: AppColors.backgroundColor,
-      body: Column(
+      body: Stack(
         children: [
-          const TopBarWidget(),
-          const TitleWidget(),
-          Expanded(
-            child: MealDisplay(
-              currentUserUid: FirebaseAuth.instance.currentUser!.uid,
+          Container(
+            width: double.infinity,
+            height: height * 0.37,
+            decoration: const ShapeDecoration(
+              color: AppColors.accentColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 70, 30, 0),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Icon(
+                    Icons.history,
+                    size: 40,
+                    color: AppColors.textColor,
+                  ),
+                ),
+                SizedBox(
+                  width: width * 0.02,
+                ),
+                const Text(
+                  'Meal History',
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 28,
+                    fontFamily: 'Rubik',
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.98,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: width * 0.86861313868,
+              height: height * 0.76670716889,
+              decoration: const ShapeDecoration(
+                color: AppColors.backgroundColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x51131313),
+                    blurRadius: 16,
+                    offset: Offset(0, 2),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: MealDisplay(
+                currentUserUid: FirebaseAuth.instance.currentUser!.uid,
+              ),
             ),
           ),
         ],
@@ -42,39 +106,58 @@ class MealDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('meals')
-          .where('uid', isEqualTo: currentUserUid)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(
-            child: Text(
-              'No meals found.',
-              style: TextStyle(color: AppColors.textColor),
+    return Column(
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        const Center(
+          child: Text(
+            'Current and Previous Meals',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppColors.textColor,
+              fontSize: 20,
+              fontFamily: 'Lato',
+              fontWeight: FontWeight.w900,
             ),
-          );
-        }
+          ),
+        ),
+        StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('meals')
+              .where('uid', isEqualTo: currentUserUid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No meals found.',
+                  style: TextStyle(color: AppColors.textColor),
+                ),
+              );
+            }
 
-        return ListView(
-          children: snapshot.data!.docs.map((document) {
-            final description = document['description'].toString();
-            final servingAmount = document['servingAmount'].toString();
-
-            return MealEntryWidget(
-              description: description,
-              servingAmount: servingAmount,
+            return ListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                for (var document in snapshot.data!.docs)
+                  MealEntryWidget(
+                    description: document['description'].toString(),
+                    servingAmount: document['servingAmount'].toString(),
+                  ),
+              ],
             );
-          }).toList(),
-        );
-      },
+          },
+        ),
+      ],
     );
   }
 }
@@ -92,12 +175,12 @@ class MealEntryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: AppColors.cardColor,
-          borderRadius: BorderRadius.circular(70),
+          borderRadius: BorderRadius.circular(40),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +203,7 @@ class MealEntryWidget extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      description,
+                      "Description: ${description.length > 4 ? "${description.substring(0, 3)}..." : description}",
                       style: const TextStyle(color: AppColors.textColor),
                     ),
                   ),
@@ -141,7 +224,7 @@ class MealEntryWidget extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      servingAmount,
+                      "Serving: $servingAmount",
                       style: const TextStyle(color: AppColors.textColor),
                     ),
                   ),
@@ -214,30 +297,6 @@ class TopBarWidget extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class TitleWidget extends StatelessWidget {
-  const TitleWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    return Center(
-      child: SizedBox(
-        height: height * 0.072,
-        child: const Text(
-          'Meal History',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: AppColors.textColor,
-            fontSize: 20,
-            fontFamily: 'Lato',
-            fontWeight: FontWeight.w900,
-          ),
-        ),
       ),
     );
   }

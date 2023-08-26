@@ -19,7 +19,7 @@ class Settings extends StatelessWidget {
     }
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(
+      bottomNavigationBar: const BottomNavigationBarWidget(
         currentTab: TabItem.Settings,
       ),
       backgroundColor: AppColors.backgroundColor,
@@ -216,21 +216,6 @@ class Settings extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.6,
       height: 1,
       color: AppColors.cardColor,
-    );
-  }
-
-  Widget _buildIconButton(
-      {required IconData icon, required VoidCallback onPressed}) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(
-          icon,
-          size: 35,
-          color: Colors.white,
-        ),
-      ),
     );
   }
 }

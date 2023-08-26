@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:congressionalappchallenge/pages/meal_pages/add_meal.dart';
+import 'package:congressionalappchallenge/pages/meal_pages/update_meal_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -61,6 +63,24 @@ class _MealHistoryState extends State<MealHistory> {
                     fontFamily: 'Rubik',
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.98,
+                  ),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MealAdd()),
+                    );
+                  },
+                  child: const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Icon(
+                      Icons.add_box,
+                      size: 40,
+                      color: AppColors.textColor,
+                    ),
                   ),
                 ),
               ],
@@ -150,8 +170,10 @@ class MealDisplay extends StatelessWidget {
               children: [
                 for (var document in snapshot.data!.docs)
                   MealEntryWidget(
+                    date: document['date'],
                     description: document['description'].toString(),
-                    servingAmount: document['servingAmount'].toString(),
+                    servingAmount: document['servingAmount'],
+                    documentId: document.id,
                   ),
               ],
             );
@@ -164,12 +186,16 @@ class MealDisplay extends StatelessWidget {
 
 class MealEntryWidget extends StatelessWidget {
   final String description;
-  final String servingAmount;
+  final int servingAmount;
+  final Timestamp date;
+  final String documentId;
 
   const MealEntryWidget({
     required this.description,
     required this.servingAmount,
     Key? key,
+    required this.documentId,
+    required this.date,
   }) : super(key: key);
 
   @override
@@ -224,7 +250,7 @@ class MealEntryWidget extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      "Serving: $servingAmount",
+                      "Serving: ${servingAmount.toString()}",
                       style: const TextStyle(color: AppColors.textColor),
                     ),
                   ),
@@ -232,18 +258,32 @@ class MealEntryWidget extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            Container(
-              width: 100,
-              height: 100,
-              decoration: const BoxDecoration(
-                color: AppColors.backgroundColor,
-                shape: BoxShape.circle,
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.edit,
-                  color: AppColors.textColor,
-                  size: 35,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MealUpdate(
+                            mealId: documentId,
+                            description: description,
+                            servingAmount: servingAmount,
+                            date: date,
+                          )),
+                );
+              },
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: const BoxDecoration(
+                  color: AppColors.backgroundColor,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.edit,
+                    color: AppColors.textColor,
+                    size: 35,
+                  ),
                 ),
               ),
             ),

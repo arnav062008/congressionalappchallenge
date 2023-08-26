@@ -8,56 +8,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../components/bottom_nav_bar.dart';
-import 'map.dart';
 
-class MealAdd extends StatefulWidget {
-  const MealAdd(
-      {Key? key,
-      this.latitude,
-      this.longitude,
-      this.desc,
-      this.date,
-      this.serving,
-      this.descr,
-      this.dates,
-      this.serve})
-      : super(key: key);
-  final double? latitude;
-  final double? longitude;
-  final String? desc;
-  final int? serving;
-  final DateTime? date;
-  final String? descr;
-  final DateTime? dates;
-  final int? serve;
+class MealUpdate extends StatefulWidget {
+  const MealUpdate({
+    Key? key,
+    required this.description,
+    required this.servingAmount,
+    required this.date,
+    required this.mealId,
+  }) : super(key: key);
+
+  final String mealId;
+  final String description;
+  final int servingAmount;
+  final Timestamp date;
+
   @override
-  State<MealAdd> createState() => _MealAddState();
+  State<MealUpdate> createState() => _MealUpdateState();
 }
 
-class _MealAddState extends State<MealAdd> {
+class _MealUpdateState extends State<MealUpdate> {
   late final TextEditingController descriptionController =
-      TextEditingController(text: widget.descr);
-  late DateTime? selectedDate = widget.date ?? DateTime.now();
+      TextEditingController(text: widget.description);
+  late DateTime? selectedDate = widget.date.toDate();
   late int servingAmounts = 1;
   late final TextEditingController _servingAmount = TextEditingController(
-    text: widget.serve.toString().isNotEmpty ? widget.serve.toString() : "",
+    text: widget.servingAmount.toString(),
   );
   CollectionReference meals = FirebaseFirestore.instance.collection('meals');
-
-  @override
-  void initState() {
-    super.initState();
-
-    selectedDate = widget.dates ?? DateTime.now();
-    _servingAmount.text = widget.serve != null ? widget.serve.toString() : "";
-
-    _servingAmount.addListener(() {
-      final text = _servingAmount.text;
-      if (text.isNotEmpty && !RegExp(r'^\d+$').hasMatch(text)) {
-        _servingAmount.text = '1';
-      }
-    });
-  }
 
   void onDateChanged(DateTime newDate) {
     setState(() {
@@ -65,63 +43,23 @@ class _MealAddState extends State<MealAdd> {
     });
   }
 
-  Future<bool> checkIfPhoneFieldExists() async {
-    final docSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser?.uid)
-        .get();
-
-    if (docSnapshot.exists) {
-      final data = docSnapshot.data() as Map<String, dynamic>;
-      return data.containsKey('phone');
-    } else {
-      return false;
-    }
-  }
-
-  void _saveMealToFirebase(context) async {
-    final hasPhoneField = await checkIfPhoneFieldExists();
-
-    if (hasPhoneField) {
-      final newMealRef = meals.doc();
-      newMealRef.set({
+  void _updateMealInFirebase(context) async {
+    try {
+      await meals.doc(widget.mealId).update({
         'description': descriptionController.text,
         'date': selectedDate,
-        'latitude': widget.latitude ?? 0.0,
-        'longitude': widget.longitude ?? 0.0,
         'servingAmount': int.parse(_servingAmount.text),
         'uid': FirebaseAuth.instance.currentUser?.uid,
         'aided': 0,
-      }).then((_) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Success'),
-              content: const Text('Meal data saved!'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }).catchError((error) {
-        if (kDebugMode) {
-          print('Error adding meal: $error');
-        }
       });
-    } else {
+
+      // Show update success dialog
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('More Details Must be Provided'),
-            content: const Text("Go To Settings under More Details"),
+            title: const Text('Success'),
+            content: const Text('Meal data updated!'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -133,6 +71,28 @@ class _MealAddState extends State<MealAdd> {
           );
         },
       );
+    } catch (error) {
+      // Show update error dialog
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Failed to update meal data.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      if (kDebugMode) {
+        print('Error updating meal: $error');
+      }
     }
   }
 
@@ -179,7 +139,7 @@ class _MealAddState extends State<MealAdd> {
                   width: width * 0.02,
                 ),
                 const Text(
-                  'Add Meals',
+                  'Update Meals', // Change the screen title to 'Update Meals'
                   style: TextStyle(
                     color: AppColors.textColor,
                     fontSize: 28,
@@ -287,6 +247,10 @@ class _MealAddState extends State<MealAdd> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
+                              onTap: () {
+                                // Call the _updateMealInFirebase method when the user wants to update
+                                _updateMealInFirebase(context);
+                              },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 20),
@@ -295,7 +259,7 @@ class _MealAddState extends State<MealAdd> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Text(
-                                  'Save',
+                                  'Update', // Change the button text to 'Update'
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: AppColors.textColor,
@@ -333,58 +297,79 @@ class _MealAddState extends State<MealAdd> {
                                   ),
                                 ),
                                 const Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MapScreen(
-                                          servingAmt: _servingAmount
-                                                  .text.isNotEmpty
-                                              ? int.parse(_servingAmount.text)
-                                              : 0,
-                                          desc: descriptionController
-                                                  .text.isNotEmpty
-                                              ? descriptionController.text
-                                              : null,
-                                          date: selectedDate ?? DateTime.now(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: const Icon(
-                                    Icons.add_location_alt,
-                                    size: 45,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 30,
-                                ),
                               ],
                             ),
                             const SizedBox(height: 20),
-                            widget.latitude != null
-                                ? Align(
-                                    alignment: Alignment.centerRight,
-                                    child: GestureDetector(
-                                      child: const Icon(
-                                        Icons.add_circle,
-                                        size: 45,
-                                        color: Colors.white,
-                                      ),
-                                      onTap: () {
-                                        _saveMealToFirebase(context);
-                                      },
-                                    ),
-                                  )
-                                : const SizedBox()
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                child: const Icon(
+                                  Icons.add_circle,
+                                  size: 45,
+                                  color: Colors.white,
+                                ),
+                                onTap: () {
+                                  _updateMealInFirebase(
+                                      context); // Call the update function here
+                                },
+                              ),
+                            ),
                           ],
                         )
                       ],
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TopBarWidget extends StatelessWidget {
+  const TopBarWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+          width * 0.08, width * 0.1, width * 0.08, width * 0.08),
+      child: Row(
+        children: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MealHistory(),
+                  ),
+                );
+              },
+            ),
+          ),
+          const Spacer(),
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: width * 0.1,
+              height: width * 0.1,
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(),
+              child: const Icon(
+                Icons.account_circle_outlined,
+                color: Colors.white,
+                size: 35,
               ),
             ),
           ),
@@ -406,7 +391,7 @@ class TitleWidget extends StatelessWidget {
         width: width * 0.71,
         height: height * 0.072,
         child: const Text(
-          'Add Meals to be Donated',
+          'Update Meals',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: AppColors.textColor,

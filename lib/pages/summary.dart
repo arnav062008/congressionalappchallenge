@@ -371,7 +371,8 @@ class _SummaryState extends State<Summary> {
                     children: List.generate(4, (index) {
                       return Container(
                         decoration: BoxDecoration(
-                          border: Border.all(width: 0.5),
+                          border: Border.all(
+                              width: 0.5, color: AppColors.cardColor),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

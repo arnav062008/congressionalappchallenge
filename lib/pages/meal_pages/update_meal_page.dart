@@ -243,35 +243,6 @@ class _MealUpdateState extends State<MealUpdate> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                // Call the _updateMealInFirebase method when the user wants to update
-                                _updateMealInFirebase(context);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 20),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Text(
-                                  'Update', // Change the button text to 'Update'
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: AppColors.textColor,
-                                    fontSize: 16,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 20),
                         Column(
                           children: [
@@ -297,22 +268,21 @@ class _MealUpdateState extends State<MealUpdate> {
                                   ),
                                 ),
                                 const Spacer(),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: GestureDetector(
-                                child: const Icon(
-                                  Icons.add_circle,
-                                  size: 45,
-                                  color: Colors.white,
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: GestureDetector(
+                                    child: const Icon(
+                                      Icons.add_circle,
+                                      size: 45,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {
+                                      _updateMealInFirebase(
+                                          context); // Call the update function here
+                                    },
+                                  ),
                                 ),
-                                onTap: () {
-                                  _updateMealInFirebase(
-                                      context); // Call the update function here
-                                },
-                              ),
+                              ],
                             ),
                           ],
                         )

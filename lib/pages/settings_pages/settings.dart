@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:congressionalappchallenge/constants.dart';
 import 'package:congressionalappchallenge/pages/onboarding/login.dart';
+import 'package:congressionalappchallenge/pages/settings_pages/preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/bottom_nav_bar.dart';
@@ -16,7 +18,7 @@ class Settings extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-    Future<void> signOut() async {
+    Future<void> signOut(context) async {
       await firebaseAuth.signOut();
       Navigator.push(
         context,
@@ -24,7 +26,7 @@ class Settings extends StatelessWidget {
       );
     }
 
-    Future<void> deleteAccount() async {
+    Future<void> deleteAccount(context) async {
       final currentUser = firebaseAuth.currentUser;
 
       if (currentUser != null) {
@@ -34,16 +36,22 @@ class Settings extends StatelessWidget {
               .collection("users")
               .doc(currentUser.uid)
               .delete();
-          print("Account and user document deleted successfully.");
+          if (kDebugMode) {
+            print("Account and user document deleted successfully.");
+          }
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SignInPage()),
           );
         } catch (e) {
-          print("Error deleting account or user document: $e");
+          if (kDebugMode) {
+            print("Error deleting account or user document: $e");
+          }
         }
       } else {
-        print("No user is currently logged in.");
+        if (kDebugMode) {
+          print("No user is currently logged in.");
+        }
       }
     }
 
@@ -133,15 +141,21 @@ class Settings extends StatelessWidget {
                       SizedBox(height: height * 0.06),
                       _buildDivider(context),
                       SizedBox(height: height * 0.03),
-                      _buildText('Preferences', context, fontSize: 18),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PreferencesScreen(),
+                          ),
+                        ),
+                        child: _buildText('Preferences', context,
+                            fontSize: 18, icon: Icons.library_add_check),
+                      ),
                       SizedBox(height: height * 0.06),
                       _buildDivider(context),
                       SizedBox(height: height * 0.03),
-                      _buildText(
-                        'Account Settings',
-                        context,
-                        fontSize: 18,
-                      ),
+                      _buildText('Account Settings', context,
+                          fontSize: 18, icon: Icons.person),
                       SizedBox(height: height * 0.06),
                       _buildDivider(context),
                       SizedBox(height: height * 0.03),
@@ -154,11 +168,8 @@ class Settings extends StatelessWidget {
                             ),
                           );
                         },
-                        child: _buildText(
-                          'Meal Details',
-                          context,
-                          fontSize: 18,
-                        ),
+                        child: _buildText('Extra Info', context,
+                            fontSize: 18, icon: Icons.info),
                       ), // Adjusted size for "Meal Details" text
 
                       SizedBox(height: height * 0.06),
@@ -173,13 +184,13 @@ class Settings extends StatelessWidget {
                           fontSize: 18,
                         ),
                         onTap: () {
-                          signOut();
+                          signOut(context);
                         },
                       ),
                       const Spacer(),
                       GestureDetector(
                         onTap: () {
-                          deleteAccount();
+                          deleteAccount(context);
                         },
                         child: Container(
                           width: width * 0.6,
@@ -219,20 +230,45 @@ class Settings extends StatelessWidget {
   }
 
   Widget _buildText(String text, BuildContext context,
-      {double fontSize = 15, FontWeight fontWeight = FontWeight.normal}) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.7,
-      height: MediaQuery.of(context).size.height * 0.035,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: AppColors.textColor,
-          fontSize: fontSize,
-          fontFamily: 'Lato',
-          fontWeight: fontWeight,
+      {double fontSize = 15,
+      FontWeight fontWeight = FontWeight.normal,
+      IconData? icon}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+            width: icon != null
+                ? MediaQuery.of(context).size.width * 0.14
+                : MediaQuery.of(context).size.width * 0.07),
+        icon != null
+            ? SizedBox(
+                height: MediaQuery.of(context).size.height * 0.035,
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                ),
+              )
+            : Container(),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.07),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: icon != null
+                ? MediaQuery.of(context).size.width * 0.4
+                : MediaQuery.of(context).size.width * 0.6,
+            child: Text(
+              text,
+              textAlign: icon != null ? null : TextAlign.center,
+              style: TextStyle(
+                color: AppColors.textColor,
+                fontSize: fontSize,
+                fontFamily: 'Lato',
+                fontWeight: fontWeight,
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 

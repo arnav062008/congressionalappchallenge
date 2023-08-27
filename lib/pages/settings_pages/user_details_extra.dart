@@ -114,7 +114,7 @@ class MealDetail extends StatelessWidget {
                     width: 40,
                     height: 40,
                     child: Icon(
-                      Icons.settings,
+                      Icons.info,
                       size: 40,
                       color: AppColors.textColor,
                     ),
@@ -131,7 +131,7 @@ class MealDetail extends StatelessWidget {
                   width: width * 0.02,
                 ),
                 const Text(
-                  'Settings',
+                  'Extra Details',
                   style: TextStyle(
                     color: AppColors.textColor,
                     fontSize: 28,

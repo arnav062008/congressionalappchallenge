@@ -172,8 +172,9 @@ class MealDisplay extends StatelessWidget {
                   MealEntryWidget(
                     date: document['date'],
                     description: document['description'].toString(),
-                    servingAmount: document['servingAmount'],
+                    aidGiven: document['aided'],
                     documentId: document.id,
+                    servingAmount: document['servingAmount'],
                   ),
               ],
             );
@@ -186,16 +187,18 @@ class MealDisplay extends StatelessWidget {
 
 class MealEntryWidget extends StatelessWidget {
   final String description;
+  final int aidGiven;
   final int servingAmount;
   final Timestamp date;
   final String documentId;
 
   const MealEntryWidget({
     required this.description,
-    required this.servingAmount,
+    required this.aidGiven,
     Key? key,
     required this.documentId,
     required this.date,
+    required this.servingAmount,
   }) : super(key: key);
 
   @override
@@ -250,7 +253,7 @@ class MealEntryWidget extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      "Serving: ${servingAmount.toString()}",
+                      "People Served: ${aidGiven.toString()}",
                       style: const TextStyle(color: AppColors.textColor),
                     ),
                   ),

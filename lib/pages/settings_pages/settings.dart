@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:congressionalappchallenge/constants.dart';
 import 'package:congressionalappchallenge/pages/onboarding/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,8 +15,36 @@ class Settings extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    signOut() async {
+
+    Future<void> signOut() async {
       await firebaseAuth.signOut();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SignInPage()),
+      );
+    }
+
+    Future<void> deleteAccount() async {
+      final currentUser = firebaseAuth.currentUser;
+
+      if (currentUser != null) {
+        try {
+          await currentUser.delete();
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(currentUser.uid)
+              .delete();
+          print("Account and user document deleted successfully.");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SignInPage()),
+          );
+        } catch (e) {
+          print("Error deleting account or user document: $e");
+        }
+      } else {
+        print("No user is currently logged in.");
+      }
     }
 
     return Scaffold(
@@ -144,18 +173,14 @@ class Settings extends StatelessWidget {
                           fontSize: 18,
                         ),
                         onTap: () {
-                          signOut().then(
-                            (value) => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignInPage()),
-                            ),
-                          );
+                          signOut();
                         },
                       ),
                       const Spacer(),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          deleteAccount();
+                        },
                         child: Container(
                           width: width * 0.6,
                           height: height * 0.05,
@@ -211,7 +236,7 @@ class Settings extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider(context) {
+  Widget _buildDivider(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.6,
       height: 1,

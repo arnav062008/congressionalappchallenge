@@ -17,7 +17,6 @@ class DetailsPopup extends StatefulWidget {
 }
 
 class _DetailsPopupState extends State<DetailsPopup> {
-  bool _isContainerVisible = false;
   String allergen = "N/A";
   String phoneNum = "N/A";
   String email = "N/A";
@@ -55,12 +54,6 @@ class _DetailsPopupState extends State<DetailsPopup> {
     } catch (e) {
       return "Error: $e";
     }
-  }
-
-  void _toggleContainerVisibility() {
-    setState(() {
-      _isContainerVisible = !_isContainerVisible;
-    });
   }
 
   int _number = 1;

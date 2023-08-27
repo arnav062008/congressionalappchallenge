@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../constants.dart';
 import '../pages/meal_pages/add_meal.dart';
-import '../pages/meal_pages/meal_locate.dart';
+import '../pages/meal_pages/meal_finder.dart';
 import '../pages/settings_pages/settings.dart';
 import '../pages/summary.dart';
 

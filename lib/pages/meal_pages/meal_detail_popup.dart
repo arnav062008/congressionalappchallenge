@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 
 import '../../components/bottom_nav_bar.dart';
 import '../../constants.dart';
-import 'meal_locate.dart';
+import 'meal_finder.dart';
 
 class DetailsPopup extends StatefulWidget {
   const DetailsPopup({Key? key, required this.mapPoint}) : super(key: key);
   final MapPoint mapPoint;
 
   @override
+  // ignore: library_private_types_in_public_api
   _DetailsPopupState createState() => _DetailsPopupState();
 }
 
@@ -128,15 +130,25 @@ class _DetailsPopupState extends State<DetailsPopup> {
                 },
               );
             } else {
-              print("Serving amount is already at 0.");
+              if (kDebugMode) {
+                print("Serving amount is already at 0.");
+              }
             }
           } else {
-            print("Document does not exist.");
+            if (kDebugMode) {
+              print("Document does not exist.");
+            }
           }
         });
       } catch (e) {
-        print("Error: $e");
+        if (kDebugMode) {
+          print("Error: $e");
+        }
       }
+    }
+
+    void _onOkButtonPressed() {
+      Navigator.pop(context); // Close the AlertDialog
     }
 
     Text servingText = Text(
@@ -148,7 +160,7 @@ class _DetailsPopupState extends State<DetailsPopup> {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      bottomNavigationBar: BottomNavigationBarWidget(
+      bottomNavigationBar: const BottomNavigationBarWidget(
         currentTab: TabItem.Map,
       ),
       body: Stack(
@@ -354,6 +366,7 @@ class _DetailsPopupState extends State<DetailsPopup> {
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
+                                                _onOkButtonPressed();
                                               },
                                               child: const Text('OK'),
                                             ),
@@ -363,7 +376,9 @@ class _DetailsPopupState extends State<DetailsPopup> {
                                     ),
                                   );
                                 } on Exception catch (e) {
-                                  print(e);
+                                  if (kDebugMode) {
+                                    print(e);
+                                  }
                                 }
                               },
                             ),
@@ -377,30 +392,6 @@ class _DetailsPopupState extends State<DetailsPopup> {
                   height: height * 0.05,
                 )
               ],
-            ),
-          ),
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            top: 0,
-            bottom: _isContainerVisible
-                ? 0
-                : MediaQuery.of(context).size.height / 2,
-            right: _isContainerVisible
-                ? 0
-                : -MediaQuery.of(context).size.width / 2,
-            child: GestureDetector(
-              onTap: _toggleContainerVisibility,
-              child: Container(
-                width: MediaQuery.of(context).size.width / 2,
-                color: Colors.green,
-                child: Center(
-                  child: Text(
-                    "Serves ${widget.mapPoint.servingAmount.toString()}",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
             ),
           ),
         ],

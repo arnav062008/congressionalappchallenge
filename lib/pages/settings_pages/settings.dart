@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/bottom_nav_bar.dart';
-import 'meal_details.dart';
+import 'user_details_extra.dart';
 
 class Settings extends StatelessWidget {
   const Settings({Key? key}) : super(key: key);

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../components/bottom_nav_bar.dart';
-import 'map.dart';
+import 'add_meal_map.dart';
 
 class MealAdd extends StatefulWidget {
   const MealAdd(

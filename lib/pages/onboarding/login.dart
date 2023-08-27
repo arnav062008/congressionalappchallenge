@@ -130,7 +130,7 @@ class _SignInPageState extends State<SignInPage> {
                                     borderRadius:
                                         BorderRadius.circular(width * 0.02),
                                     border: Border.all(
-                                        color: const Color(0xffdddddd),
+                                        color: Colors.white,
                                         width: width * 0.01),
                                     color: const Color(0xfff7f7f7),
                                   ),
@@ -192,7 +192,7 @@ class _SignInPageState extends State<SignInPage> {
                                     borderRadius:
                                         BorderRadius.circular(width * 0.02),
                                     border: Border.all(
-                                        color: const Color(0xffdddddd),
+                                        color: Colors.white,
                                         width: width * 0.01),
                                     color: const Color(0xfff7f7f7),
                                   ),

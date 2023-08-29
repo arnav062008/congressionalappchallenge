@@ -20,11 +20,52 @@ class _SummaryState extends State<Summary> {
       .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
   bool _isWeeklySelected = true;
   bool _isMonthlySelected = false;
+  String text = "";
+  int calculateTotalServingAmountThisWeek(List<Meals> meals) {
+    DateTime today = DateTime.now();
+    DateTime monday = today.subtract(Duration(days: today.weekday - 1));
+
+    List<Meals> mealsThisWeek = meals.where((meal) {
+      DateTime mealDate = meal.date.toDate();
+      return mealDate.isAfter(monday) || mealDate.isAtSameMomentAs(monday);
+    }).toList();
+
+    int totalServingAmountThisWeek = 0;
+
+    for (var meal in mealsThisWeek) {
+      totalServingAmountThisWeek += meal.aided;
+    }
+
+    return totalServingAmountThisWeek;
+  }
+
+  int calculateTotalServingAmountThisMonth(List<Meals> meals) {
+    DateTime today = DateTime.now();
+    DateTime firstDayOfMonth = DateTime(today.year, today.month, 1);
+
+    List<Meals> mealsThisMonth = meals.where((meal) {
+      DateTime mealDate = meal.date.toDate();
+      return mealDate.isAfter(firstDayOfMonth) ||
+          mealDate.isAtSameMomentAs(firstDayOfMonth);
+    }).toList();
+
+    int totalServingAmountThisMonth = 0;
+
+    for (var meal in mealsThisMonth) {
+      totalServingAmountThisMonth += meal.aided;
+    }
+
+    return totalServingAmountThisMonth;
+  }
+
+  int totalServingAmount = 0;
+  int totalServingAmountMonth = 0;
 
   void _toggleSelectionWeek() {
     setState(() {
       _isWeeklySelected = true;
       _isMonthlySelected = false;
+      textValue();
     });
   }
 
@@ -32,6 +73,7 @@ class _SummaryState extends State<Summary> {
     setState(() {
       _isWeeklySelected = false;
       _isMonthlySelected = true;
+      textValue();
     });
   }
 
@@ -63,10 +105,30 @@ class _SummaryState extends State<Summary> {
     }
   }
 
+  void textValue() {
+    String tempText = totalServingAmountMonth == 0 && _isMonthlySelected == true
+        ? "You Can Step it Up, No Meals Donated this Month"
+        : totalServingAmount == 0 && _isWeeklySelected == true
+            ? "You Can Step it Up, No Meals Donated this Week"
+            : 'Great Job, You Have Donated ${_isWeeklySelected ? totalServingAmount.toString() : totalServingAmountMonth.toString()} Meals This ${_isWeeklySelected ? "Week" : "Month"}';
+    setState(() {
+      text = tempText;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    getAllMyMeals();
+    setState(() {
+      getAllMyMeals().then((_) {
+        setState(() {
+          totalServingAmount = calculateTotalServingAmountThisWeek(_meals);
+          totalServingAmountMonth =
+              calculateTotalServingAmountThisMonth(_meals);
+          textValue();
+        });
+      });
+    });
   }
 
   @override
@@ -123,24 +185,6 @@ class _SummaryState extends State<Summary> {
               100;
 
       return percentageChange;
-    }
-
-    int calculateTotalServingAmountThisWeek(List<Meals> meals) {
-      DateTime today = DateTime.now();
-      DateTime monday = today.subtract(Duration(days: today.weekday - 1));
-
-      List<Meals> mealsThisWeek = meals.where((meal) {
-        DateTime mealDate = meal.date.toDate();
-        return mealDate.isAfter(monday) || mealDate.isAtSameMomentAs(monday);
-      }).toList();
-
-      int totalServingAmountThisWeek = 0;
-
-      for (var meal in mealsThisWeek) {
-        totalServingAmountThisWeek += meal.aided;
-      }
-
-      return totalServingAmountThisWeek;
     }
 
     double calculateAverageItemsPerMonth(List<Meals> meals) {
@@ -201,32 +245,10 @@ class _SummaryState extends State<Summary> {
       return percentageChange;
     }
 
-    int calculateTotalServingAmountThisMonth(List<Meals> meals) {
-      DateTime today = DateTime.now();
-      DateTime firstDayOfMonth = DateTime(today.year, today.month, 1);
-
-      List<Meals> mealsThisMonth = meals.where((meal) {
-        DateTime mealDate = meal.date.toDate();
-        return mealDate.isAfter(firstDayOfMonth) ||
-            mealDate.isAtSameMomentAs(firstDayOfMonth);
-      }).toList();
-
-      int totalServingAmountThisMonth = 0;
-
-      for (var meal in mealsThisMonth) {
-        totalServingAmountThisMonth += meal.aided;
-      }
-
-      return totalServingAmountThisMonth;
-    }
-
-    int totalServingAmountMonth = calculateTotalServingAmountThisMonth(_meals);
     double percentageChangeLastMonth =
         calculatePercentageChangeLastMonth(_meals);
     double totalItemsThisMonth = calculateTotalItemsThisMonth(_meals);
     double averageMealsPerMonth = calculateAverageItemsPerMonth(_meals);
-
-    int totalServingAmount = calculateTotalServingAmountThisWeek(_meals);
     double percentageChangeLastWeek = calculatePercentageChangeLastWeek(_meals);
     double totalItemsThisWeek = calculateTotalItemsThisWeek(_meals);
     double averageMealsPerDay = calculateAverageItemsPerDay(_meals);
@@ -312,9 +334,7 @@ class _SummaryState extends State<Summary> {
                     child: SizedBox(
                       width: width * 0.8,
                       child: Text(
-                        totalServingAmount == 0
-                            ? "You Can Step it Up, No Meals Donated this Week"
-                            : 'Great Job, You Have Donated ${_isWeeklySelected ? totalServingAmount.toString() : totalServingAmountMonth.toString()} Meals This ${_isWeeklySelected ? "Week" : "Month"}',
+                        text,
                         style: const TextStyle(
                           color: AppColors.textColor,
                           fontSize: 20,
@@ -393,8 +413,8 @@ class _SummaryState extends State<Summary> {
                                             : index == 2
                                                 ? percentageChangeLastWeek !=
                                                         double.infinity
-                                                    ? "${percentageChangeLastWeek.toString()}%"
-                                                    : "Not enough data"
+                                                    ? "${percentageChangeLastWeek.toString().length < 6 ? percentageChangeLastWeek.toString() : percentageChangeLastWeek.toString().substring(0, 6)}%"
+                                                    : "Insufficient Data"
                                                 : totalServingAmount.toString(),
                                     style: const TextStyle(
                                       color: AppColors.textColor,
@@ -420,7 +440,7 @@ class _SummaryState extends State<Summary> {
                                                 ? percentageChangeLastMonth !=
                                                         double.infinity
                                                     ? "${percentageChangeLastMonth.toString()}%"
-                                                    : "Not enough data"
+                                                    : "Insufficient Data"
                                                 : totalServingAmountMonth
                                                     .toString(),
                                     style: const TextStyle(

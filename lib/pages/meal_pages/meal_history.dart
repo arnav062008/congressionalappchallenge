@@ -126,61 +126,62 @@ class MealDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(
-          height: 20,
-        ),
-        const Center(
-          child: Text(
-            'Current and Previous Meals',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.textColor,
-              fontSize: 20,
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.w900,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 20,
+          ),
+          const Center(
+            child: Text(
+              'Current and Previous Meals',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.textColor,
+                fontSize: 20,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
-        ),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('meals')
-              .where('uid', isEqualTo: currentUserUid)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
-            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No meals found.',
-                  style: TextStyle(color: AppColors.textColor),
-                ),
-              );
-            }
-
-            return ListView(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                for (var document in snapshot.data!.docs)
-                  MealEntryWidget(
-                    date: document['date'],
-                    description: document['description'].toString(),
-                    aidGiven: document['aided'],
-                    documentId: document.id,
-                    servingAmount: document['servingAmount'],
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('meals')
+                .where('uid', isEqualTo: currentUserUid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No meals found.',
+                    style: TextStyle(color: AppColors.textColor),
                   ),
-              ],
-            );
-          },
-        ),
-      ],
+                );
+              }
+
+              return ListView(
+                shrinkWrap: true,
+                children: [
+                  for (var document in snapshot.data!.docs)
+                    MealEntryWidget(
+                      date: document['date'],
+                      description: document['description'].toString(),
+                      aidGiven: document['aided'],
+                      documentId: document.id,
+                      servingAmount: document['servingAmount'],
+                    ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

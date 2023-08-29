@@ -178,11 +178,8 @@ class Settings extends StatelessWidget {
 
                       SizedBox(height: height * 0.03),
                       GestureDetector(
-                        child: _buildText(
-                          'Sign Out',
-                          context,
-                          fontSize: 18,
-                        ),
+                        child: _buildText('Sign Out', context,
+                            fontSize: 18, fontWeight: FontWeight.bold),
                         onTap: () {
                           signOut(context);
                         },

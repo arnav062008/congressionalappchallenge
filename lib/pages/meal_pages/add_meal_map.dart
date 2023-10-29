@@ -110,6 +110,7 @@ class _MapScreenState extends State<MapScreen> {
           : Stack(
               children: [
                 GoogleMap(
+                  zoomControlsEnabled: true,
                   initialCameraPosition: CameraPosition(
                     target: _initialPosition!,
                     zoom: 15,
@@ -131,7 +132,7 @@ class _MapScreenState extends State<MapScreen> {
                           },
                           icon: const Icon(
                             Icons.arrow_back_ios_new_rounded,
-                            color: AppColors.hintTextColor,
+                            color: AppColors.textColor,
                           ),
                         ),
                         const SizedBox(
@@ -149,36 +150,41 @@ class _MapScreenState extends State<MapScreen> {
                               right: Radius.circular(100),
                             ),
                           ),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: TextField(
-                              controller: _searchController,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Search for an address',
-                                hintStyle: const TextStyle(
-                                  color: AppColors.hintTextColor,
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () async {
-                                    String query = _searchController.text;
-                                    if (query.isNotEmpty) {
-                                      List<Location> locations =
-                                          await locationFromAddress(query);
-                                      if (locations.isNotEmpty) {
-                                        Location location = locations.first;
-                                        LatLng position = LatLng(
-                                          location.latitude,
-                                          location.longitude,
-                                        );
-                                        _mapController?.animateCamera(
-                                          CameraUpdate.newLatLng(position),
-                                        );
+                          child: Center(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Search for an address',
+                                  hintStyle: const TextStyle(
+                                    color: AppColors.hintTextColor,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () async {
+                                      String query = _searchController.text;
+                                      if (query.isNotEmpty) {
+                                        List<Location> locations =
+                                            await locationFromAddress(query);
+                                        if (locations.isNotEmpty) {
+                                          Location location = locations.first;
+                                          LatLng position = LatLng(
+                                            location.latitude,
+                                            location.longitude,
+                                          );
+                                          _mapController?.animateCamera(
+                                            CameraUpdate.newLatLng(position),
+                                          );
+                                        }
                                       }
-                                    }
-                                  },
-                                  iconSize: mediaQuery.size.width * 0.06,
-                                  icon: const Icon(Icons.search),
+                                    },
+                                    iconSize: mediaQuery.size.width * 0.06,
+                                    icon: const Icon(
+                                      Icons.search,
+                                      color: AppColors.textColor,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),

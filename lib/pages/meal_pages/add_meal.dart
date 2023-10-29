@@ -216,7 +216,7 @@ class _MealAddState extends State<MealAdd> {
               width: width * 0.86861313868,
               height: height * 0.76670716889,
               decoration: const ShapeDecoration(
-                color: AppColors.backgroundColor,
+                color: AppColors.accentColor2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
@@ -268,7 +268,7 @@ class _MealAddState extends State<MealAdd> {
                             data: const CupertinoThemeData(
                               textTheme: CupertinoTextThemeData(
                                 dateTimePickerTextStyle: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.textColor,
                                   fontSize: 20,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w600,
@@ -330,7 +330,7 @@ class _MealAddState extends State<MealAdd> {
                                   child: const Icon(
                                     Icons.add_location_alt,
                                     size: 45,
-                                    color: Colors.white,
+                                    color: AppColors.hintTextColor,
                                   ),
                                 ),
                                 const SizedBox(
@@ -384,7 +384,7 @@ class TitleWidget extends StatelessWidget {
           'Add Meals to be Donated',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: AppColors.textColor,
+            color: AppColors.hintTextColor,
             fontSize: 20,
             fontFamily: 'Lato',
             fontWeight: FontWeight.w900,
@@ -417,7 +417,7 @@ class TextBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: ShapeDecoration(
-        color: AppColors.textColor,
+        color: AppColors.primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),

@@ -310,7 +310,7 @@ class _SummaryState extends State<Summary> {
               width: width * 0.86861313868,
               height: height * 0.76670716889,
               decoration: const ShapeDecoration(
-                color: AppColors.backgroundColor,
+                color: AppColors.accentColor2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
@@ -336,7 +336,7 @@ class _SummaryState extends State<Summary> {
                       child: Text(
                         text,
                         style: const TextStyle(
-                          color: AppColors.textColor,
+                          color: AppColors.hintTextColor,
                           fontSize: 20,
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.w900,
@@ -361,10 +361,10 @@ class _SummaryState extends State<Summary> {
                               width: width * 0.5,
                               height: 43,
                               decoration: ShapeDecoration(
-                                color: const Color(0xFF23292E),
+                                color: AppColors.cardColor,
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
-                                      width: 0.50, color: Color(0xFF353B3F)),
+                                      width: 0.50, color: AppColors.cardColor),
                                   borderRadius: BorderRadius.circular(78),
                                 ),
                               ),
@@ -417,7 +417,7 @@ class _SummaryState extends State<Summary> {
                                                     : "Insufficient Data"
                                                 : totalServingAmount.toString(),
                                     style: const TextStyle(
-                                      color: AppColors.textColor,
+                                      color: AppColors.hintTextColor,
                                       fontSize: 12,
                                       fontFamily: 'Lato',
                                       fontWeight: FontWeight.normal,
@@ -444,7 +444,7 @@ class _SummaryState extends State<Summary> {
                                                 : totalServingAmountMonth
                                                     .toString(),
                                     style: const TextStyle(
-                                      color: AppColors.textColor,
+                                      color: AppColors.hintTextColor,
                                       fontSize: 12,
                                       fontFamily: 'Lato',
                                       fontWeight: FontWeight.normal,
@@ -461,7 +461,7 @@ class _SummaryState extends State<Summary> {
                                             : "People Aided",
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
-                                  color: Color(0xFF5E6469),
+                                  color: AppColors.textColor,
                                   fontSize: 10,
                                   fontFamily: 'Lato',
                                   fontWeight: FontWeight.w900,

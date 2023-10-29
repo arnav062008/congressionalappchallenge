@@ -1,3 +1,4 @@
+import 'package:congressionalappchallenge/constants.dart';
 import 'package:congressionalappchallenge/pages/summary.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -43,27 +44,18 @@ class _SignInPageState extends State<SignInPage> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF22282C),
+      backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [
           Expanded(
             child: Stack(
               children: [
-                Positioned(
-                  left: width * -0.88,
-                  bottom: height * 0.54,
-                  child: Container(
-                    width: 766,
-                    height: 841,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          Color.fromRGBO(6, 156, 138, 1),
-                          Color.fromRGBO(221, 246, 243, 0),
-                        ],
-                      ),
-                    ),
+                Container(
+                  height: height * 0.25,
+                  width: width,
+                  child: CustomPaint(
+                    child: Container(),
+                    painter: PainterDetails(), // CustomPainterClass
                   ),
                 ),
                 Positioned(
@@ -128,9 +120,9 @@ class _SignInPageState extends State<SignInPage> {
                                     borderRadius:
                                         BorderRadius.circular(width * 0.02),
                                     border: Border.all(
-                                        color: Colors.white,
+                                        color: Colors.transparent,
                                         width: width * 0.01),
-                                    color: const Color(0xfff7f7f7),
+                                    color: AppColors.textBoxColor,
                                   ),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 0.04),
@@ -149,7 +141,7 @@ class _SignInPageState extends State<SignInPage> {
                                               width * 0.05, 0, 0, 0),
                                           child: Icon(
                                             Icons.email_outlined,
-                                            color: const Color(0xffc6c6c6),
+                                            color: Colors.white,
                                             size: width * 0.06,
                                           ),
                                         ),
@@ -166,13 +158,10 @@ class _SignInPageState extends State<SignInPage> {
                                               enabledBorder: InputBorder.none,
                                               errorBorder: InputBorder.none,
                                               focusedBorder: InputBorder.none,
-                                              focusedErrorBorder:
-                                                  InputBorder.none,
                                               hintText: 'Email Address',
                                               border: InputBorder.none,
                                               hintStyle: TextStyle(
-                                                color: const Color(0xff858585)
-                                                    .withOpacity(0.5),
+                                                color: Colors.white,
                                                 fontSize: width * 0.04,
                                               ),
                                             ),
@@ -190,9 +179,9 @@ class _SignInPageState extends State<SignInPage> {
                                     borderRadius:
                                         BorderRadius.circular(width * 0.02),
                                     border: Border.all(
-                                        color: Colors.white,
+                                        color: Colors.transparent,
                                         width: width * 0.01),
-                                    color: const Color(0xfff7f7f7),
+                                    color: AppColors.textBoxColor,
                                   ),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 0.04),
@@ -206,17 +195,18 @@ class _SignInPageState extends State<SignInPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              width * 0.05, 0, 0, 0),
-                                          child: Icon(
-                                            Icons.lock_outline,
-                                            color: const Color(0xffc6c6c6),
-                                            size: width * 0.06,
+                                        Container(
+                                          width: width * 0.85,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Color(
+                                                  0xff9BB068), // Custom border color when focused
+                                              width: 3.0,
+                                            ),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(
+                                                    10.0)), // Optional: Add rounded corners to the container
                                           ),
-                                        ),
-                                        SizedBox(width: width * 0.015),
-                                        Expanded(
                                           child: TextField(
                                             style: TextStyle(
                                               color: const Color(0xff858585),
@@ -225,22 +215,25 @@ class _SignInPageState extends State<SignInPage> {
                                             obscureText: true,
                                             controller: passwordController,
                                             decoration: InputDecoration(
-                                              disabledBorder: InputBorder.none,
-                                              enabledBorder: InputBorder.none,
-                                              errorBorder: InputBorder.none,
-                                              focusedBorder: InputBorder.none,
-                                              focusedErrorBorder:
-                                                  InputBorder.none,
+                                              icon: const Icon(
+                                                Icons.lock_outline,
+                                                color: Colors.white,
+                                              ),
                                               hintText: 'Password',
-                                              border: InputBorder.none,
                                               hintStyle: TextStyle(
                                                 color: const Color(0xff858585)
                                                     .withOpacity(0.5),
                                                 fontSize: width * 0.04,
                                               ),
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              focusedErrorBorder:
+                                                  InputBorder.none,
                                             ),
                                           ),
-                                        ),
+                                        )
                                       ],
                                     ),
                                   ),
@@ -262,7 +255,7 @@ class _SignInPageState extends State<SignInPage> {
                                     decoration: BoxDecoration(
                                       borderRadius:
                                           BorderRadius.circular(width * 0.02),
-                                      color: const Color(0xff169c89),
+                                      color: AppColors.accentColor,
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 0.04),
@@ -509,5 +502,26 @@ class BasicAlert extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+const double _kCurveHeight = 35;
+
+class PainterDetails extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Path();
+    p.lineTo(0, size.height - _kCurveHeight);
+    p.relativeQuadraticBezierTo(
+        size.width / 2, 2 * _kCurveHeight, size.width, 0);
+    p.lineTo(size.width, 0);
+    p.close();
+
+    canvas.drawPath(p, Paint()..color = AppColors.cardColor);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }

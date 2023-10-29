@@ -76,7 +76,7 @@ class MealDetail extends StatelessWidget {
               title,
               textAlign: TextAlign.left,
               style: const TextStyle(
-                color: Color(0xFFFEFCFB),
+                color: AppColors.hintTextColor,
                 fontSize: 15,
                 fontFamily: 'Lato',
                 fontWeight: FontWeight.w600,
@@ -86,7 +86,7 @@ class MealDetail extends StatelessWidget {
         );
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(
+      bottomNavigationBar: const BottomNavigationBarWidget(
         currentTab: TabItem.Settings,
       ),
       backgroundColor: AppColors.backgroundColor,
@@ -114,7 +114,7 @@ class MealDetail extends StatelessWidget {
                     width: 40,
                     height: 40,
                     child: Icon(
-                      Icons.info,
+                      Icons.settings,
                       size: 40,
                       color: AppColors.textColor,
                     ),
@@ -149,7 +149,7 @@ class MealDetail extends StatelessWidget {
               width: width * 0.86861313868,
               height: height * 0.76670716889,
               decoration: const ShapeDecoration(
-                color: AppColors.backgroundColor,
+                color: AppColors.accentColor2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
@@ -171,7 +171,7 @@ class MealDetail extends StatelessWidget {
                   height: height * 0.9,
                   clipBehavior: Clip.antiAlias,
                   decoration: const BoxDecoration(
-                    color: AppColors.backgroundColor,
+                    color: AppColors.accentColor2,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16),
@@ -207,7 +207,7 @@ class MealDetail extends StatelessWidget {
                             height: height * 0.05,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(width * 0.02),
-                              color: AppColors.accentColor,
+                              color: AppColors.backgroundColor,
                             ),
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 0.04),
@@ -219,7 +219,7 @@ class MealDetail extends StatelessWidget {
                                 Text(
                                   "Confirm",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: AppColors.hintTextColor,
                                     fontSize: width * 0.05,
                                   ),
                                 ),
@@ -298,7 +298,7 @@ class PhoneNumberTextBox extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
               child: Icon(
                 Icons.phone,
-                color: AppColors.hintTextColor.withOpacity(0.8),
+                color: AppColors.textColor.withOpacity(0.8),
                 size: width * 0.06,
               ),
             ),
@@ -306,7 +306,7 @@ class PhoneNumberTextBox extends StatelessWidget {
             Expanded(
               child: TextField(
                 style: TextStyle(
-                  color: AppColors.hintTextColor,
+                  color: AppColors.textColor,
                   fontSize: width * 0.04,
                 ),
                 controller: controller,
@@ -319,7 +319,7 @@ class PhoneNumberTextBox extends StatelessWidget {
                   focusedErrorBorder: InputBorder.none,
                   hintText: 'Phone Number: ',
                   hintStyle: TextStyle(
-                    color: AppColors.hintTextColor,
+                    color: AppColors.textColor,
                     fontSize: width * 0.04,
                   ),
                 ),
@@ -371,7 +371,7 @@ class TextBoxs extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
               child: Icon(
                 icon,
-                color: AppColors.hintTextColor.withOpacity(0.8),
+                color: AppColors.textColor.withOpacity(0.8),
                 size: width * 0.06,
               ),
             ),
@@ -380,7 +380,7 @@ class TextBoxs extends StatelessWidget {
               child: TextField(
                 obscureText: obsc,
                 style: TextStyle(
-                  color: AppColors.hintTextColor,
+                  color: AppColors.textColor,
                   fontSize: width * 0.04,
                 ),
                 controller: _nameController,
@@ -393,7 +393,7 @@ class TextBoxs extends StatelessWidget {
                   hintText: text,
                   border: InputBorder.none,
                   hintStyle: TextStyle(
-                    color: AppColors.hintTextColor,
+                    color: AppColors.textColor,
                     fontSize: width * 0.04,
                   ),
                 ),

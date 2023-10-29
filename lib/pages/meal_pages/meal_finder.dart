@@ -152,6 +152,8 @@ class _MapPointScreenState extends State<MapPointScreen> {
     return Stack(
       children: [
         GoogleMap(
+          tiltGesturesEnabled: false,
+          zoomControlsEnabled: true,
           onMapCreated: (controller) {
             _mapController = controller;
           },
@@ -186,36 +188,38 @@ class _MapPointScreenState extends State<MapPointScreen> {
                         right: Radius.circular(100),
                       ),
                     ),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Search for an address',
-                          hintStyle: const TextStyle(
-                            color: AppColors.hintTextColor,
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: () async {
-                              String query = _searchController.text;
-                              if (query.isNotEmpty) {
-                                List<Location> locations =
-                                    await locationFromAddress(query);
-                                if (locations.isNotEmpty) {
-                                  Location location = locations.first;
-                                  LatLng position = LatLng(
-                                    location.latitude,
-                                    location.longitude,
-                                  );
-                                  _mapController?.animateCamera(
-                                    CameraUpdate.newLatLng(position),
-                                  );
+                    child: Center(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Search for an address',
+                            hintStyle: const TextStyle(
+                              color: AppColors.hintTextColor,
+                            ),
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                String query = _searchController.text;
+                                if (query.isNotEmpty) {
+                                  List<Location> locations =
+                                      await locationFromAddress(query);
+                                  if (locations.isNotEmpty) {
+                                    Location location = locations.first;
+                                    LatLng position = LatLng(
+                                      location.latitude,
+                                      location.longitude,
+                                    );
+                                    _mapController?.animateCamera(
+                                      CameraUpdate.newLatLng(position),
+                                    );
+                                  }
                                 }
-                              }
-                            },
-                            iconSize: mediaQuery.size.width * 0.06,
-                            icon: const Icon(Icons.search),
+                              },
+                              iconSize: mediaQuery.size.width * 0.06,
+                              icon: const Icon(Icons.search),
+                            ),
                           ),
                         ),
                       ),

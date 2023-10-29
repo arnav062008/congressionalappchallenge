@@ -23,9 +23,9 @@ class BottomNavigationBarWidget extends StatelessWidget {
 
   final TabItem currentTab;
 
-  static const Color backgroundColor = Color(0xFF2e343b);
+  static Color backgroundColor = Color(0xFF161314);
   static const Color shadowColor = Color(0xB22e343b);
-  static const Color iconColor = Color(0xFFCDCDCD);
+  static const Color iconColor = AppColors.accentColor;
   static const double iconSize = 0.077;
 
   Widget _buildTab(
@@ -41,7 +41,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
           icon: Icon(
             icon,
             size: MediaQuery.of(context).size.width * iconSize,
-            color: isActive ? Colors.white : iconColor,
+            color: isActive ? Colors.white : AppColors.cardColor,
           ),
         ),
         _buildTabIndicator(isActive),
@@ -54,7 +54,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
       width: 6,
       height: 6,
       decoration: ShapeDecoration(
-        color: isActive ? AppColors.accentColor : Colors.transparent,
+        color: isActive ? AppColors.hintTextColor : Colors.transparent,
         shape: const CircleBorder(),
       ),
     );
@@ -65,7 +65,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 64,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: backgroundColor,
         boxShadow: [
           BoxShadow(

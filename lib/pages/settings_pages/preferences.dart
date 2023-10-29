@@ -1,3 +1,4 @@
+import 'package:congressionalappchallenge/pages/settings_pages/settings.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/bottom_nav_bar.dart';
@@ -39,14 +40,22 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
             padding: const EdgeInsets.fromLTRB(30, 70, 30, 0),
             child: Row(
               children: [
-                const SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: Icon(
-                    Icons.library_add_check_rounded,
-                    size: 40,
-                    color: AppColors.textColor,
+                GestureDetector(
+                  child: const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Icon(
+                      Icons.settings,
+                      size: 40,
+                      color: AppColors.hintTextColor,
+                    ),
                   ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Settings()),
+                    );
+                  },
                 ),
                 SizedBox(
                   width: width * 0.02,
@@ -54,7 +63,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 const Text(
                   'Preferences',
                   style: TextStyle(
-                    color: AppColors.textColor,
+                    color: AppColors.hintTextColor,
                     fontSize: 28,
                     fontFamily: 'Rubik',
                     fontWeight: FontWeight.bold,
@@ -70,7 +79,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
               width: width * 0.86861313868,
               height: height * 0.76670716889,
               decoration: const ShapeDecoration(
-                color: AppColors.backgroundColor,
+                color: AppColors.accentColor2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
@@ -92,11 +101,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   height: height * 0.9,
                   clipBehavior: Clip.antiAlias,
                   decoration: const BoxDecoration(
-                      color: AppColors.backgroundColor,
+                      color: AppColors.accentColor2,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16))),
-                  child: Container(),
+                  child: const Column(
+                    children: [],
+                  ),
                 ),
               ),
             ),

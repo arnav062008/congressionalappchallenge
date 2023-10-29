@@ -110,7 +110,7 @@ class Settings extends StatelessWidget {
               width: width * 0.86861313868,
               height: height * 0.76670716889,
               decoration: const ShapeDecoration(
-                color: AppColors.backgroundColor,
+                color: AppColors.accentColor2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
@@ -132,7 +132,7 @@ class Settings extends StatelessWidget {
                   height: height * 0.9,
                   clipBehavior: Clip.antiAlias,
                   decoration: const BoxDecoration(
-                      color: AppColors.backgroundColor,
+                      color: AppColors.accentColor2,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16))),
@@ -179,7 +179,7 @@ class Settings extends StatelessWidget {
                       SizedBox(height: height * 0.03),
                       GestureDetector(
                         child: _buildText('Sign Out', context,
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18, icon: Icons.logout_rounded),
                         onTap: () {
                           signOut(context);
                         },
@@ -242,7 +242,7 @@ class Settings extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.035,
                 child: Icon(
                   icon,
-                  color: Colors.white,
+                  color: AppColors.hintTextColor,
                 ),
               )
             : Container(),

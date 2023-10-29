@@ -92,7 +92,7 @@ class _MealHistoryState extends State<MealHistory> {
               width: width * 0.86861313868,
               height: height * 0.76670716889,
               decoration: const ShapeDecoration(
-                color: AppColors.backgroundColor,
+                color: AppColors.accentColor2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
@@ -137,7 +137,7 @@ class MealDisplay extends StatelessWidget {
               'Current and Previous Meals',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.textColor,
+                color: AppColors.hintTextColor,
                 fontSize: 20,
                 fontFamily: 'Lato',
                 fontWeight: FontWeight.w900,
@@ -205,11 +205,11 @@ class MealEntryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+      padding: const EdgeInsets.fromLTRB(15, 0, 5, 15),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-          color: AppColors.cardColor,
+          color: AppColors.backgroundColor,
           borderRadius: BorderRadius.circular(40),
         ),
         child: Row(
@@ -218,44 +218,51 @@ class MealEntryWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 171,
-                  height: 41,
-                  decoration: ShapeDecoration(
-                    color: AppColors.backgroundColor,
-                    shape: RoundedRectangleBorder(
-                      side: const BorderSide(
-                        width: 0.50,
-                        color: AppColors.borderColor,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  child: Container(
+                    width: 171,
+                    height: 41,
+                    decoration: ShapeDecoration(
+                      color: AppColors.accentColor2,
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(
+                          width: 0.50,
+                          color: AppColors.borderColor,
+                        ),
+                        borderRadius: BorderRadius.circular(78),
                       ),
-                      borderRadius: BorderRadius.circular(78),
                     ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Description: ${description.length > 4 ? "${description.substring(0, 3)}..." : description}",
-                      style: const TextStyle(color: AppColors.textColor),
+                    child: Center(
+                      child: Text(
+                        "Description: ${description.length > 4 ? "${description.substring(0, 3)}..." : description}",
+                        style: const TextStyle(
+                            color: AppColors.textColor, fontSize: 15),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 10),
-                Container(
-                  width: 171,
-                  height: 41,
-                  decoration: ShapeDecoration(
-                    color: AppColors.backgroundColor,
-                    shape: RoundedRectangleBorder(
-                      side: const BorderSide(
-                        width: 0.50,
-                        color: AppColors.borderColor,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                  child: Container(
+                    width: 171,
+                    height: 41,
+                    decoration: ShapeDecoration(
+                      color: AppColors.accentColor2,
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(
+                          width: 0.50,
+                          color: AppColors.borderColor,
+                        ),
+                        borderRadius: BorderRadius.circular(78),
                       ),
-                      borderRadius: BorderRadius.circular(78),
                     ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "People Served: ${aidGiven.toString()}",
-                      style: const TextStyle(color: AppColors.textColor),
+                    child: Center(
+                      child: Text(
+                        "People Served: ${aidGiven.toString()}",
+                        style: const TextStyle(color: AppColors.textColor),
+                      ),
                     ),
                   ),
                 ),
@@ -279,7 +286,7 @@ class MealEntryWidget extends StatelessWidget {
                 width: 100,
                 height: 100,
                 decoration: const BoxDecoration(
-                  color: AppColors.backgroundColor,
+                  color: AppColors.accentColor2,
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
@@ -296,51 +303,6 @@ class MealEntryWidget extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class TopBarWidget extends StatelessWidget {
-  const TopBarWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        width * 0.08,
-        width * 0.1,
-        width * 0.08,
-        width * 0.04,
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: AppColors.textColor,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          const Spacer(),
-          Container(
-            width: width * 0.1,
-            height: width * 0.1,
-            clipBehavior: Clip.antiAlias,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.account_circle_outlined,
-              color: AppColors.textColor,
-              size: 35,
-            ),
-          ),
-        ],
       ),
     );
   }

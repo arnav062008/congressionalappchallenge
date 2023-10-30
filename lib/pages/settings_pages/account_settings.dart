@@ -1,23 +1,66 @@
-import 'package:congressionalappchallenge/pages/settings_pages/settings.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:congressionalappchallenge/pages/settings_pages/settings.dart'
+    as settings;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/bottom_nav_bar.dart';
 import '../../constants.dart';
+import '../onboarding/login.dart';
 
-class PreferencesScreen extends StatefulWidget {
-  const PreferencesScreen({super.key});
+class AccountSettingScreen extends StatefulWidget {
+  const AccountSettingScreen({Key? key}) : super(key: key);
 
   @override
-  State<PreferencesScreen> createState() => _PreferencesScreenState();
+  State<AccountSettingScreen> createState() => _AccountSettingScreenState();
 }
 
-class _PreferencesScreenState extends State<PreferencesScreen> {
+class _AccountSettingScreenState extends State<AccountSettingScreen> {
+  bool isChangePasswordVisible = false;
+  TextEditingController newPasswordController = TextEditingController();
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  Future<void> signOut(context) async {
+    await firebaseAuth.signOut();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignInPage()),
+    );
+  }
+
+  Future<void> deleteAccount(context) async {
+    final currentUser = firebaseAuth.currentUser;
+
+    if (currentUser != null) {
+      try {
+        await currentUser.delete();
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(currentUser.uid)
+            .delete();
+        if (kDebugMode) {
+          print("Account and user document deleted successfully.");
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SignInPage()),
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print("Error deleting account or user document: $e");
+        }
+      }
+    } else {
+      if (kDebugMode) {
+        print("No user is currently logged in.");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    bool notificationsValue = false;
 
     return Scaffold(
       bottomNavigationBar: const BottomNavigationBarWidget(
@@ -56,7 +99,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Settings()),
+                      MaterialPageRoute(
+                          builder: (context) => const settings.Settings()),
                     );
                   },
                 ),
@@ -64,7 +108,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   width: width * 0.02,
                 ),
                 const Text(
-                  'Preferences',
+                  'Account Settings',
                   style: TextStyle(
                     color: AppColors.textColor,
                     fontSize: 28,
@@ -113,54 +157,62 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                       SizedBox(height: height * 0.06),
                       _buildDivider(context),
                       SizedBox(height: height * 0.03),
-                      Row(
-                        children: [
-                          _buildText('Notifications', context,
-                              fontSize: 18, icon: Icons.notifications_active),
-                          CupertinoSwitch(
-                            value: notificationsValue,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                notificationsValue = value ?? false;
-                              });
-                            },
-                          )
-                        ],
+                      _buildRowWithIcon(
+                        'Change Password',
+                        Icons.lock,
+                        () {
+                          setState(() {
+                            isChangePasswordVisible = true;
+                          });
+                        },
                       ),
                       SizedBox(height: height * 0.06),
                       _buildDivider(context),
                       SizedBox(height: height * 0.03),
-                      Row(
-                        children: [
-                          _buildText('Face ID', context,
-                              fontSize: 18, icon: Icons.face),
-                          CupertinoSwitch(
-                            value: notificationsValue,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                notificationsValue = value ?? false;
-                              });
-                            },
-                          )
-                        ],
-                      ),
+                      _buildRowWithIcon('Change Username', Icons.person, () {
+                        // Add Face ID handling logic
+                      }),
                       SizedBox(height: height * 0.06),
                       _buildDivider(context),
                       SizedBox(height: height * 0.03),
-                      Row(
-                        children: [
-                          _buildText('Location Access', context,
-                              fontSize: 18, icon: Icons.location_pin),
-                          CupertinoSwitch(
-                            value: notificationsValue,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                notificationsValue = value ?? false;
-                              });
-                            },
-                          )
-                        ],
+                      GestureDetector(
+                        child: _buildText('Sign Out',
+                            fontSize: 18, icon: Icons.logout_rounded),
+                        onTap: () {
+                          signOut(context);
+                        },
                       ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          deleteAccount(context);
+                        },
+                        child: Container(
+                          width: width * 0.6,
+                          height: height * 0.05,
+                          decoration: ShapeDecoration(
+                            color: AppColors.textColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Center(
+                            child: SizedBox(
+                              child: Text(
+                                'Deactivate Account',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppColors.hintTextColor,
+                                  fontSize: 15,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.1),
                     ],
                   ),
                 ),
@@ -172,33 +224,37 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     );
   }
 
-  Widget _buildText(String text, BuildContext context,
-      {double fontSize = 15,
-      FontWeight fontWeight = FontWeight.normal,
-      IconData? icon}) {
+  Widget _buildRowWithIcon(String text, IconData icon, VoidCallback onTap) {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: _buildText(text, icon: icon),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildText(String text, {double fontSize = 15, IconData? icon}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
-            width: icon != null
-                ? MediaQuery.of(context).size.width * 0.14
-                : MediaQuery.of(context).size.width * 0.07),
-        icon != null
-            ? SizedBox(
-                height: MediaQuery.of(context).size.height * 0.035,
-                child: Icon(
-                  icon,
-                  color: AppColors.hintTextColor,
-                ),
-              )
-            : Container(),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.07),
+          width: icon != null ? 60 : 30,
+        ),
+        if (icon != null)
+          SizedBox(
+            height: 40,
+            child: Icon(
+              icon,
+              color: AppColors.hintTextColor,
+            ),
+          ),
+        const SizedBox(width: 30),
         Align(
           alignment: Alignment.centerLeft,
           child: SizedBox(
-            width: icon != null
-                ? MediaQuery.of(context).size.width * 0.4
-                : MediaQuery.of(context).size.width * 0.6,
+            width: icon != null ? 200 : 300,
             child: Text(
               text,
               textAlign: icon != null ? null : TextAlign.center,
@@ -206,7 +262,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 color: AppColors.textColor,
                 fontSize: fontSize,
                 fontFamily: 'Lato',
-                fontWeight: fontWeight,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:congressionalappchallenge/constants.dart';
 import 'package:congressionalappchallenge/pages/onboarding/login.dart';
+import 'package:congressionalappchallenge/pages/settings_pages/account_settings.dart';
 import 'package:congressionalappchallenge/pages/settings_pages/preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -154,8 +155,18 @@ class Settings extends StatelessWidget {
                       SizedBox(height: height * 0.06),
                       _buildDivider(context),
                       SizedBox(height: height * 0.03),
-                      _buildText('Account Settings', context,
-                          fontSize: 18, icon: Icons.person),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AccountSettingScreen(),
+                            ),
+                          );
+                        },
+                        child: _buildText('Account Settings', context,
+                            fontSize: 18, icon: Icons.person),
+                      ),
                       SizedBox(height: height * 0.06),
                       _buildDivider(context),
                       SizedBox(height: height * 0.03),

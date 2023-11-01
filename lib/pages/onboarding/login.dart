@@ -2,7 +2,9 @@ import 'package:congressionalappchallenge/constants.dart';
 import 'package:congressionalappchallenge/pages/summary.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../firebase_options.dart';
 import 'register.dart';
 
 class SignInPage extends StatefulWidget {
@@ -19,13 +21,50 @@ class _SignInPageState extends State<SignInPage> {
     double height = MediaQuery.of(context).size.height;
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+    Future<User?> signInWithGoogle({required BuildContext context}) async {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user;
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn(
+              clientId: DefaultFirebaseOptions.currentPlatform.iosClientId)
+          .signIn();
+
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        try {
+          final UserCredential userCredential =
+              await auth.signInWithCredential(credential);
+
+          user = userCredential.user;
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'account-exists-with-different-credential') {
+            // handle the error here
+          } else if (e.code == 'invalid-credential') {
+            // handle the error here
+          }
+        } catch (e) {
+          // handle the error here
+        }
+      }
+
+      return user;
+    }
+
     Future<void> signIn(String email, String password) async {
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
-
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const Summary()),
@@ -50,7 +89,7 @@ class _SignInPageState extends State<SignInPage> {
           Expanded(
             child: Stack(
               children: [
-                Container(
+                SizedBox(
                   height: height * 0.25,
                   width: width,
                   child: CustomPaint(
@@ -149,7 +188,7 @@ class _SignInPageState extends State<SignInPage> {
                                         Expanded(
                                           child: TextField(
                                             style: TextStyle(
-                                              color: const Color(0xff858585),
+                                              color: AppColors.accentColor2,
                                               fontSize: width * 0.04,
                                             ),
                                             controller: emailController,
@@ -195,18 +234,17 @@ class _SignInPageState extends State<SignInPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Container(
-                                          width: width * 0.85,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Color(
-                                                  0xff9BB068), // Custom border color when focused
-                                              width: 3.0,
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(
-                                                    10.0)), // Optional: Add rounded corners to the container
+                                        Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              width * 0.05, 0, 0, 0),
+                                          child: Icon(
+                                            Icons.lock_outline,
+                                            color: Colors.white,
+                                            size: width * 0.06,
                                           ),
+                                        ),
+                                        SizedBox(width: width * 0.015),
+                                        Expanded(
                                           child: TextField(
                                             style: TextStyle(
                                               color: const Color(0xff858585),
@@ -215,22 +253,16 @@ class _SignInPageState extends State<SignInPage> {
                                             obscureText: true,
                                             controller: passwordController,
                                             decoration: InputDecoration(
-                                              icon: const Icon(
-                                                Icons.lock_outline,
-                                                color: Colors.white,
-                                              ),
-                                              hintText: 'Password',
-                                              hintStyle: TextStyle(
-                                                color: const Color(0xff858585)
-                                                    .withOpacity(0.5),
-                                                fontSize: width * 0.04,
-                                              ),
-                                              border: InputBorder.none,
-                                              focusedBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
                                               enabledBorder: InputBorder.none,
                                               errorBorder: InputBorder.none,
-                                              focusedErrorBorder:
-                                                  InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              hintText: 'Password',
+                                              border: InputBorder.none,
+                                              hintStyle: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: width * 0.04,
+                                              ),
                                             ),
                                           ),
                                         )
@@ -318,7 +350,7 @@ class _SignInPageState extends State<SignInPage> {
                             ),
                             SizedBox(height: height * 0.03),
                             SizedBox(
-                              width: width * 0.9,
+                              width: width * 0.6,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment:
@@ -353,42 +385,16 @@ class _SignInPageState extends State<SignInPage> {
                                                 width * 0.02),
                                           ),
                                           child: GestureDetector(
-                                              onTap: () {},
-                                              child: FlutterLogo(
-                                                  size: width * 0.04)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width: width * 0.25,
-                                    height: height * 0.06,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(width * 0.02),
-                                      border: Border.all(
-                                          color: const Color(0xffdddddd),
-                                          width: width * 0.01),
-                                      color: const Color(0xfff7f7f7),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 0.04),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: width * 0.04,
-                                          height: height * 0.04,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                width * 0.02),
+                                            onTap: () {
+                                              signInWithGoogle(
+                                                  context: context);
+                                            },
+                                            child: Image.asset(
+                                              'assets/google.png',
+                                              width: width * 0.04,
+                                              height: height * 0.04,
+                                            ),
                                           ),
-                                          child:
-                                              FlutterLogo(size: width * 0.04),
                                         ),
                                       ],
                                     ),
@@ -420,8 +426,11 @@ class _SignInPageState extends State<SignInPage> {
                                             borderRadius: BorderRadius.circular(
                                                 width * 0.02),
                                           ),
-                                          child:
-                                              FlutterLogo(size: width * 0.04),
+                                          child: Image.asset(
+                                            'assets/apple.png',
+                                            width: width * 0.04,
+                                            height: height * 0.04,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -517,7 +526,7 @@ class PainterDetails extends CustomPainter {
     p.lineTo(size.width, 0);
     p.close();
 
-    canvas.drawPath(p, Paint()..color = AppColors.cardColor);
+    canvas.drawPath(p, Paint()..color = AppColors.accentColor);
   }
 
   @override

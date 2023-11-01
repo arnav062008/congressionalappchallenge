@@ -346,7 +346,7 @@ class _MealAddState extends State<MealAdd> {
                                       child: const Icon(
                                         Icons.add_circle,
                                         size: 45,
-                                        color: Colors.white,
+                                        color: AppColors.hintTextColor,
                                       ),
                                       onTap: () {
                                         _saveMealToFirebase(context);

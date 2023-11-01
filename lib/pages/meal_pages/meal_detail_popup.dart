@@ -148,7 +148,10 @@ class _DetailsPopupState extends State<DetailsPopup> {
       _number > 1
           ? "Serves: ${widget.mapPoint.servingAmount} (-$_number)"
           : "Serves: ${widget.mapPoint.servingAmount}",
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 12,
+      ),
     );
 
     return Scaffold(
@@ -180,9 +183,9 @@ class _DetailsPopupState extends State<DetailsPopup> {
                               child: Text(
                                 "Meal Info: ",
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12),
                               ),
                             ),
                           ),
@@ -201,7 +204,8 @@ class _DetailsPopupState extends State<DetailsPopup> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "Description: ${widget.mapPoint.description.length > 20 ? "${widget.mapPoint.description.substring(0, 17)}..." : widget.mapPoint.description}",
-                                style: const TextStyle(color: Colors.white),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 12),
                               ),
                             ),
                           ),
@@ -220,9 +224,9 @@ class _DetailsPopupState extends State<DetailsPopup> {
                             child: Text(
                               "Extra Info: ",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -230,7 +234,8 @@ class _DetailsPopupState extends State<DetailsPopup> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               "Allergen Information: $allergen",
-                              style: const TextStyle(color: Colors.white),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 12),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -238,7 +243,8 @@ class _DetailsPopupState extends State<DetailsPopup> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               "Phone Number: $phoneNum",
-                              style: const TextStyle(color: Colors.white),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -248,7 +254,8 @@ class _DetailsPopupState extends State<DetailsPopup> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "Email: $email",
-                                style: const TextStyle(color: Colors.white),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 12),
                               ),
                             ),
                           ),
